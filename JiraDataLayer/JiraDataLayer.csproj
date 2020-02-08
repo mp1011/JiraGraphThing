@@ -11,6 +11,7 @@
     <PackageReference Include="MvvmLightLibsStd10" Version="5.4.1.1" />
     <PackageReference Include="OneConfig.Standard" Version="1.0.0-beta" />
     <PackageReference Include="sqlite" Version="3.13.0" />
+    <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.112" />
     <PackageReference Include="System.Interactive.Async" Version="4.0.0" />
     <PackageReference Include="System.Threading.Tasks" Version="4.3.0" />

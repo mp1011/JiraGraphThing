@@ -1,6 +1,10 @@
 ﻿using JiraDataLayer.Models;
+using JiraDataLayer.Models.Cache;
+using JiraDataLayer.Models.GraphModels;
+using JiraGraphThing.Core.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace JiraDataLayer.Services
@@ -14,34 +18,47 @@ namespace JiraDataLayer.Services
             _jiraIssueService = jiraIssueService;
         }
 
-        public async Task<JiraGraph> LoadItemGraph(string key)
+        public async Task<IssueNode> LoadItemGraph(string key)
         {
             var parent = await _jiraIssueService.GetIssue(key);
-            return await ConstructNode(parent);
+            return await ConstructNode(parent, new NonCache<IssueNode>());
         }
 
-        private async Task<JiraGraph> ConstructNode(JiraIssue issue)
+        public async Task<SprintNode> LoadSprintGraph(string sprint)
         {
-            switch(issue.TypeName)
+            var cache = new ConcurrentInMemoryCache<IssueNode>();
+            List<IssueNode> sprintNodes = new List<IssueNode>();
+            await foreach(var issue in _jiraIssueService.GetIssues(new SearchArgs(sprint: sprint)))
             {
-                case "Epic":
-                    return new EpicNode(issue, await LoadChildren<IssueNode>(issue));
-                default:
-                    return new IssueNode(issue, await LoadChildren<IssueNode>(issue));
+                sprintNodes.Add(await ConstructNode(issue, cache));
             }
+
+            var unique = sprintNodes.Where(s => !sprintNodes
+                .Any(k => k != s && k.Contains(s)))
+                .ToArray();
+
+            return new SprintNode(sprint, unique);
         }
 
+        private async Task<IssueNode> ConstructNode(JiraIssue issue, ICache<IssueNode> cache)
+        {
+            return await (cache.GetOrCompute(issue.Key, async () =>
+            {
+                var logs = await _jiraIssueService.GetWorkLogs(issue.Key).AttachErrorHandler();
+                return new IssueNode(issue, logs, await LoadChildren<IssueNode>(issue,cache).AttachErrorHandler());
+            })).AttachErrorHandler();
+        }
 
-        private async Task<T[]> LoadChildren<T>(JiraIssue parent)
+        private async Task<T[]> LoadChildren<T>(JiraIssue parent, ICache<IssueNode> cache)
             where T:JiraGraph
         {
 
-            var children = await _jiraIssueService.GetIssuesAsArray(new SearchArgs(parentKey: parent.Key));
+            var children = await _jiraIssueService.GetIssuesAsArray(new SearchArgs(parentKey: parent.Key)).AttachErrorHandler();
             List<T> result = new List<T>();
 
             foreach(var child in children)
             {
-                var childNode = await ConstructNode(child);
+                var childNode = await ConstructNode(child,cache).AttachErrorHandler();
                 if (childNode is T typedNode)
                     result.Add(typedNode);
                 else 

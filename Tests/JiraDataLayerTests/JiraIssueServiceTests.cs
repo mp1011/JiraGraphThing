@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight.Ioc;
 using JiraDataLayer.Models;
 using JiraDataLayer.Services;
 using NUnit.Framework;
+using System.Linq;
 using System.Threading.Tasks;
 
 
@@ -30,6 +31,7 @@ namespace Tests.JiraDataLayerTests
         [TestCase("DSDE-3001")]
         [TestCase("DSDE-3193")]
         [TestCase("DSDE-3195")]
+        [TestCase("DSDE-3243")]
         public async Task CanGetSpecificIssue(string key)
         {
             var service = SimpleIoc.Default.GetInstance<JiraIssueService>();
@@ -42,6 +44,20 @@ namespace Tests.JiraDataLayerTests
             }
 
             count.Should().Be(1);
+        }
+
+        [TestCase("DSDE-3197", "DSDE Sprint 22")]
+        public async Task CanReadSprint(string key, string expectedSprint)
+        {
+            var service = SimpleIoc.Default.GetInstance<JiraIssueService>();
+            (await service.GetIssue(key)).Sprint.Should().Be(expectedSprint);
+        }
+
+        [TestCase("DSDE-3197", 2.0)]
+        public async Task CanReadStoryPoints(string key, decimal expectedStoryPoints)
+        {
+            var service = SimpleIoc.Default.GetInstance<JiraIssueService>();
+            (await service.GetIssue(key)).StoryPoints.Should().Be(expectedStoryPoints);
         }
 
         [TestCase("DSDE-2995",5)]
@@ -72,6 +88,17 @@ namespace Tests.JiraDataLayerTests
             }
 
             count.Should().Be(expectedChildren);
+        }
+
+        [TestCase("DSDE-3197", 5)]
+        public async Task CanReadLoggedHours(string key, double expectedHours)
+        {
+            var service = SimpleIoc.Default.GetInstance<JiraIssueService>();
+
+            var logs = await service.GetWorkLogs(key);
+            logs.Sum(p => p.TimeSpent.TotalHours)
+                .Should()
+                .Be(expectedHours);
         }
     }
 }

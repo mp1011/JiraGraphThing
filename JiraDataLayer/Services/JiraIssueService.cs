@@ -68,6 +68,15 @@ namespace JiraDataLayer.Services
             }
         }
 
+        public async Task<WorkLog[]> GetWorkLogs(string issueKey)
+        {
+            var client = _jiraClientProvider.CreateClient();
+            var logs = (await client.Issues.GetWorklogsAsync(issueKey)).ToArray();
+
+            return logs.Select(log => new WorkLog(log))
+                .ToArray();
+        }
+
         private string GetJql(SearchArgs searchArgs)
         {
             List<string> terms = new List<string>();
@@ -79,6 +88,8 @@ namespace JiraDataLayer.Services
 
             if (searchArgs.ParentKey.NotNullOrEmpty())
                 terms.Add($"(Parent = '{searchArgs.ParentKey}' OR \"Epic Link\"='{searchArgs.ParentKey}')");
+            if (searchArgs.Sprint.NotNullOrEmpty())
+                terms.Add($"Sprint='{searchArgs.Sprint}'");
 
             return string.Join(" AND ", terms.ToArray());
         }

@@ -16,4 +16,8 @@
     <PackageReference Include="System.Threading.Tasks" Version="4.3.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\JiraGraphThing.Core\JiraGraphThing.Core.csproj" />
+  </ItemGroup>
+
 </Project>

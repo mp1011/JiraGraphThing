@@ -5,9 +5,11 @@ VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JiraGraphThing", "JiraGraphThing\JiraGraphThing.csproj", "{1A70DDBA-0A6D-42C7-80D0-A31E2FB6E60E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JiraDataLayer", "JiraDataLayer\JiraDataLayer.csproj", "{47967A29-B57D-4EB4-B0E8-C892624933B9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JiraDataLayer", "JiraDataLayer\JiraDataLayer.csproj", "{47967A29-B57D-4EB4-B0E8-C892624933B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{CD5ACB99-A9A3-4462-89C0-3BE59F053B1F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{CD5ACB99-A9A3-4462-89C0-3BE59F053B1F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JiraGraphThing.Core", "JiraGraphThing.Core\JiraGraphThing.Core.csproj", "{4F1C20D8-84B8-4DA6-BF14-36DBB4707488}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -89,6 +91,26 @@ Global
 		{CD5ACB99-A9A3-4462-89C0-3BE59F053B1F}.Release|x64.Build.0 = Release|Any CPU
 		{CD5ACB99-A9A3-4462-89C0-3BE59F053B1F}.Release|x86.ActiveCfg = Release|Any CPU
 		{CD5ACB99-A9A3-4462-89C0-3BE59F053B1F}.Release|x86.Build.0 = Release|Any CPU
+		{4F1C20D8-84B8-4DA6-BF14-36DBB4707488}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F1C20D8-84B8-4DA6-BF14-36DBB4707488}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F1C20D8-84B8-4DA6-BF14-36DBB4707488}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{4F1C20D8-84B8-4DA6-BF14-36DBB4707488}.Debug|ARM.Build.0 = Debug|Any CPU
+		{4F1C20D8-84B8-4DA6-BF14-36DBB4707488}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{4F1C20D8-84B8-4DA6-BF14-36DBB4707488}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{4F1C20D8-84B8-4DA6-BF14-36DBB4707488}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4F1C20D8-84B8-4DA6-BF14-36DBB4707488}.Debug|x64.Build.0 = Debug|Any CPU
+		{4F1C20D8-84B8-4DA6-BF14-36DBB4707488}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4F1C20D8-84B8-4DA6-BF14-36DBB4707488}.Debug|x86.Build.0 = Debug|Any CPU
+		{4F1C20D8-84B8-4DA6-BF14-36DBB4707488}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F1C20D8-84B8-4DA6-BF14-36DBB4707488}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F1C20D8-84B8-4DA6-BF14-36DBB4707488}.Release|ARM.ActiveCfg = Release|Any CPU
+		{4F1C20D8-84B8-4DA6-BF14-36DBB4707488}.Release|ARM.Build.0 = Release|Any CPU
+		{4F1C20D8-84B8-4DA6-BF14-36DBB4707488}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{4F1C20D8-84B8-4DA6-BF14-36DBB4707488}.Release|ARM64.Build.0 = Release|Any CPU
+		{4F1C20D8-84B8-4DA6-BF14-36DBB4707488}.Release|x64.ActiveCfg = Release|Any CPU
+		{4F1C20D8-84B8-4DA6-BF14-36DBB4707488}.Release|x64.Build.0 = Release|Any CPU
+		{4F1C20D8-84B8-4DA6-BF14-36DBB4707488}.Release|x86.ActiveCfg = Release|Any CPU
+		{4F1C20D8-84B8-4DA6-BF14-36DBB4707488}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

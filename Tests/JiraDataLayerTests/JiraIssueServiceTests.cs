@@ -18,7 +18,7 @@ namespace Tests.JiraDataLayerTests
             var service = SimpleIoc.Default.GetInstance<JiraIssueService>();
             bool foundAny = false;
 
-            await foreach(var result in service.GetIssues(new SearchArgs(project: project, take:10)).ConfigureAwait(false))
+            foreach(var result in await service.GetIssues(new SearchArgs(project: project, take:10)))
             {
                 foundAny = true;
                 result.Project.Should().Be(project);
@@ -37,7 +37,7 @@ namespace Tests.JiraDataLayerTests
             var service = SimpleIoc.Default.GetInstance<JiraIssueService>();
             int count = 0;
 
-            await foreach (var result in service.GetIssues(new SearchArgs(key: key)).ConfigureAwait(false))
+            foreach (var result in await service.GetIssues(new SearchArgs(key: key)).ConfigureAwait(false))
             {
                 count++;
                 result.Key.Should().Be(key);
@@ -66,7 +66,7 @@ namespace Tests.JiraDataLayerTests
             var service = SimpleIoc.Default.GetInstance<JiraIssueService>();
             int count = 0;
 
-            await foreach (var result in service.GetIssues(new SearchArgs(parentKey: parentKey)).ConfigureAwait(false))
+            foreach (var result in await service.GetIssues(new SearchArgs(parentKey: parentKey)).ConfigureAwait(false))
             {
                 count++;
                 result.EpicKey.Should().Be(parentKey);
@@ -81,7 +81,7 @@ namespace Tests.JiraDataLayerTests
             var service = SimpleIoc.Default.GetInstance<JiraIssueService>();
             int count = 0;
 
-            await foreach (var result in service.GetIssues(new SearchArgs(parentKey: parentKey)).ConfigureAwait(false))
+            foreach (var result in await service.GetIssues(new SearchArgs(parentKey: parentKey)).ConfigureAwait(false))
             {
                 count++;
                 result.ParentKey.Should().Be(parentKey);

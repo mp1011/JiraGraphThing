@@ -28,7 +28,7 @@ namespace JiraDataLayer.Services
         {
             var cache = new ConcurrentInMemoryCache<IssueNode>();
             List<IssueNode> sprintNodes = new List<IssueNode>();
-            await foreach(var issue in _jiraIssueService.GetIssues(new SearchArgs(sprint: sprint)))
+            foreach(var issue in await _jiraIssueService.GetIssues(new SearchArgs(sprint: sprint)))
             {
                 sprintNodes.Add(await ConstructNode(issue, cache));
             }
@@ -53,7 +53,7 @@ namespace JiraDataLayer.Services
             where T:JiraGraph
         {
 
-            var children = await _jiraIssueService.GetIssuesAsArray(new SearchArgs(parentKey: parent.Key)).AttachErrorHandler();
+            var children = await _jiraIssueService.GetIssues(new SearchArgs(parentKey: parent.Key)).AttachErrorHandler();
             List<T> result = new List<T>();
 
             foreach(var child in children)

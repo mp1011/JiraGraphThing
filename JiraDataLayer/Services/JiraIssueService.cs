@@ -24,24 +24,12 @@ namespace JiraDataLayer.Services
 
         public async Task<JiraIssue> GetIssue(string key)
         {
-            await foreach(var result in GetIssues(new SearchArgs(key:key,take:1)).ConfigureAwait(true))            
-                return result;
-            
-            return null;
+            return (await GetIssues(new SearchArgs(key: key, take: 1))).FirstOrDefault();            
         }
 
-        public async Task<JiraIssue[]> GetIssuesAsArray(SearchArgs searchArgs)
+        public async Task<JiraIssue[]> GetIssues(SearchArgs searchArgs)
         {
             List<JiraIssue> results = new List<JiraIssue>();
-
-            await foreach(var result in GetIssues(searchArgs))            
-                results.Add(result);
-            
-            return results.ToArray();
-        }
-
-        public async IAsyncEnumerable<JiraIssue> GetIssues(SearchArgs searchArgs)
-        {
             var client = _jiraClientProvider.CreateClient();
             int maxToTake = searchArgs.Take;
             int skip = 0;
@@ -60,12 +48,14 @@ namespace JiraDataLayer.Services
                 maxToTake -= chunk.Length;
 
                 foreach (var item in chunk)
-                    yield return new JiraIssue(item, _customFieldReader);
+                    results.Add(new JiraIssue(item, _customFieldReader));
 
                 skip += chunk.Length;
                 if (chunk.Length == 0)
                     break;
             }
+
+            return results.ToArray();
         }
 
         public async Task<WorkLog[]> GetWorkLogs(string issueKey)

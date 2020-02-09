@@ -1,24 +1,29 @@
 ﻿using Atlassian.Jira;
 using JiraDataLayer.Models.CustomFieldModels;
+using JiraDataLayer.Models.DTO;
 using JiraDataLayer.Services;
 
 namespace JiraDataLayer.Models
 {
-    public class JiraIssue
+    public class JiraIssue 
     {
-        public string Key { get; }
+        public string Key { get; private set; }
 
-        public string EpicKey { get; }
+        public string EpicKey { get; private set; }
 
-        public string ParentKey { get; }
+        public string ParentKey { get; private set; }
 
-        public string Project { get; }
+        public string Project { get; private set; }
 
-        public string TypeName { get; }
+        public string TypeName { get; private set; }
 
-        public string Sprint { get; }
+        public string Sprint { get; private set; }
 
-        public decimal? StoryPoints { get; }
+        public decimal? StoryPoints { get; private set; }
+
+        internal JiraIssue()
+        {
+        }
 
         internal JiraIssue(Issue issue, CustomFieldReader customFieldReader)
         {

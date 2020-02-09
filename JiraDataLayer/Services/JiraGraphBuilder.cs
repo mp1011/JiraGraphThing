@@ -1,5 +1,5 @@
-﻿using JiraDataLayer.Models;
-using JiraDataLayer.Models.Cache;
+﻿using JiraDataLayer.Cache;
+using JiraDataLayer.Models;
 using JiraDataLayer.Models.GraphModels;
 using JiraGraphThing.Core.Extensions;
 using System;
@@ -12,6 +12,10 @@ namespace JiraDataLayer.Services
     public class JiraGraphBuilder
     {
         private readonly JiraIssueService _jiraIssueService;
+
+        public delegate void NotifyProgress(string message, decimal progress);
+
+        public NotifyProgress OnProgressChanged;
 
         public JiraGraphBuilder(JiraIssueService jiraIssueService)
         {
@@ -26,11 +30,18 @@ namespace JiraDataLayer.Services
 
         public async Task<SprintNode> LoadSprintGraph(string sprint)
         {
+            OnProgressChanged?.Invoke($"Loading issues for {sprint}",0);
+
             var cache = new ConcurrentInMemoryCache<IssueNode>();
             List<IssueNode> sprintNodes = new List<IssueNode>();
-            foreach(var issue in await _jiraIssueService.GetIssues(new SearchArgs(sprint: sprint)))
+
+            var issues = await _jiraIssueService.GetIssues(new SearchArgs(sprint: sprint));
+            int processed = 0;
+            foreach (var issue in issues)
             {
+                OnProgressChanged?.Invoke($"Loading {issue.Key}", (decimal)processed / (decimal)issues.Length);
                 sprintNodes.Add(await ConstructNode(issue, cache));
+                processed++;
             }
 
             var unique = sprintNodes.Where(s => !sprintNodes

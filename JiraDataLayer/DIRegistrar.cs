@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
 using JiraDataLayer.Services;
 using JiraDataLayer.Services.CustomFieldReaders;
+using JiraDataLayer.SqLite;
 using JiraGraphThing.Core.Extensions;
 
 namespace JiraDataLayer
@@ -13,12 +14,19 @@ namespace JiraDataLayer
             if (!_registered)
             {
                 _registered = true;
+
+                SimpleIoc.Default.Register<AutoMapperService>();
+                SimpleIoc.Default.Register<SQLiteConnectionProvider>();
+                SimpleIoc.Default.Register<SQLiteTableCreator>();
+                SimpleIoc.Default.RegisterInternal<SQLiteDAO>();
+                SimpleIoc.Default.RegisterInternal<SQLiteCacheProvider>();
+              
                 SimpleIoc.Default.Register<IJiraConfig, JiraConfig>();
                 SimpleIoc.Default.Register<JiraRestClientProvider>();
                 SimpleIoc.Default.Register<JiraGraphBuilder>();
                 SimpleIoc.Default.Register<CustomFieldReader>();
                 SimpleIoc.Default.RegisterAllAsArray<ICustomFieldReader>();
-                SimpleIoc.Default.Register(() => new JiraIssueService(SimpleIoc.Default.GetInstance<JiraRestClientProvider>(), SimpleIoc.Default.GetInstance<CustomFieldReader>()));
+                SimpleIoc.Default.RegisterInternal<JiraIssueService>();
             }
         }
     }

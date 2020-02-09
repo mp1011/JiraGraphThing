@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 
-namespace JiraDataLayer.Models.Cache
+namespace JiraDataLayer.Cache
 {
     public class ConcurrentInMemoryCache<T> : ICache<T>
     {

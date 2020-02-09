@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace JiraDataLayer.Models.Cache
+namespace JiraDataLayer.Cache
 {
     public interface ICache<T>
     {

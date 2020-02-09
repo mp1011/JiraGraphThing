@@ -1,3 +1,4 @@
+using JiraDataLayer;
 using NUnit.Framework;
 using System.IO;
 
@@ -11,6 +12,7 @@ namespace Tests
         {
             OneConfig.Services.FileHelper.ApplicationDirectory = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
             JiraDataLayer.DIRegistrar.RegisterTypes();
+            File.Delete("LocalDB.sqlite");
         }
     }
 }

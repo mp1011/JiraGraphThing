@@ -1,4 +1,7 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight.Ioc;
+using JiraGraphThing.IOC;
+using JiraGraphThing.Services;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -30,6 +33,7 @@ namespace JiraGraphThing
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+            DIRegistrar.RegisterTypes();
         }
 
         /// <summary>
@@ -63,10 +67,8 @@ namespace JiraGraphThing
             {
                 if (rootFrame.Content == null)
                 {
-                    // When the navigation stack isn't restored navigate to the first page,
-                    // configuring the new page by passing required information as a navigation
-                    // parameter
-                    rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                    SimpleIoc.Default.GetInstance<PageNavigationService>()
+                        .NavigateToMainPage();
                 }
                 // Ensure the current window is active
                 Window.Current.Activate();

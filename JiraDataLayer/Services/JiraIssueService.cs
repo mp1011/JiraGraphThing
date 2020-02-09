@@ -1,5 +1,7 @@
 ﻿using Atlassian.Jira;
+using JiraDataLayer.Cache;
 using JiraDataLayer.Models;
+using JiraDataLayer.SqLite;
 using JiraGraphThing.Core.Extensions;
 using System;
 using System.Collections.Generic;
@@ -14,12 +16,16 @@ namespace JiraDataLayer.Services
     {
         private readonly CustomFieldReader _customFieldReader;
         private readonly JiraRestClientProvider _jiraClientProvider;
-        private const int _recordsPerBatch = 100;
+        private readonly SQLiteCache<SearchResults> _cache;
 
-        internal JiraIssueService(JiraRestClientProvider jiraClientProvider, CustomFieldReader customFieldReader)
+        private const int _recordsPerBatch = 100;
+        
+        internal JiraIssueService(JiraRestClientProvider jiraClientProvider, CustomFieldReader customFieldReader,
+            SQLiteCacheProvider cacheProvider)
         {
             _customFieldReader = customFieldReader;
             _jiraClientProvider = jiraClientProvider;
+            _cache = cacheProvider.CreateCache<SearchResults>();
         }
 
         public async Task<JiraIssue> GetIssue(string key)
@@ -28,15 +34,20 @@ namespace JiraDataLayer.Services
         }
 
         public async Task<JiraIssue[]> GetIssues(SearchArgs searchArgs)
+        {     
+            var jql = GetJql(searchArgs);
+            var results = await _cache.GetOrCompute(jql, () => DoSearch(jql, searchArgs.Take));
+            return results.Items;
+        }
+
+        private async Task<SearchResults> DoSearch(string jql, int maxToTake)
         {
             List<JiraIssue> results = new List<JiraIssue>();
             var client = _jiraClientProvider.CreateClient();
-            int maxToTake = searchArgs.Take;
             int skip = 0;
+            int originalMaxToTake = maxToTake;
 
-            var jql = GetJql(searchArgs);
-      
-            while(true)
+            while (true)
             {
                 var chunk = (await client
                                     .Issues
@@ -55,7 +66,7 @@ namespace JiraDataLayer.Services
                     break;
             }
 
-            return results.ToArray();
+            return new SearchResults(jql, originalMaxToTake, results.ToArray());
         }
 
         public async Task<WorkLog[]> GetWorkLogs(string issueKey)
@@ -67,7 +78,7 @@ namespace JiraDataLayer.Services
                 .ToArray();
         }
 
-        private string GetJql(SearchArgs searchArgs)
+        public string GetJql(SearchArgs searchArgs)
         {
             List<string> terms = new List<string>();
             if (searchArgs.Project.NotNullOrEmpty())

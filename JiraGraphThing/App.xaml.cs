@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
+using JiraDataLayer;
 using JiraGraphThing.IOC;
 using JiraGraphThing.Services;
 using System;
@@ -10,6 +11,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -33,7 +35,7 @@ namespace JiraGraphThing
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
-            DIRegistrar.RegisterTypes();
+            IOC.DIRegistrar.RegisterTypes();            
         }
 
         /// <summary>
@@ -43,6 +45,7 @@ namespace JiraGraphThing
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
+            DataConfig.DataPath = ApplicationData.Current.LocalFolder.Path;
             Frame rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JiraGraphThing.Core.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
@@ -9,10 +10,13 @@ namespace JiraDataLayer.SqLite
 {
     class SQLiteConnectionProvider
     {
-
         public IDbConnection CreateConnection()
         {
-            var connectionString = $@"Data Source=LocalDB.sqlite;ProviderName=System.Data.SQLite";
+            string dbFilePath = "LocalDB.sqlite";
+            if(DataConfig.DataPath.NotNullOrEmpty())
+                dbFilePath = $@"{DataConfig.DataPath}\{dbFilePath}";
+
+            var connectionString = $@"Data Source={dbFilePath};ProviderName=System.Data.SQLite;";
             if (!File.Exists("LocalDB.sqlite"))            
                 connectionString += "New=True;";
             

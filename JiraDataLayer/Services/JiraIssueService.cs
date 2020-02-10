@@ -17,6 +17,7 @@ namespace JiraDataLayer.Services
         private readonly CustomFieldReader _customFieldReader;
         private readonly JiraRestClientProvider _jiraClientProvider;
         private readonly SQLiteCache<SearchResults> _cache;
+        private readonly SQLiteCache<WorkLog[]> _workLogCache;
 
         private const int _recordsPerBatch = 100;
         
@@ -26,6 +27,7 @@ namespace JiraDataLayer.Services
             _customFieldReader = customFieldReader;
             _jiraClientProvider = jiraClientProvider;
             _cache = cacheProvider.CreateCache<SearchResults>();
+            _workLogCache = cacheProvider.CreateArrayCache<WorkLog>();
         }
 
         public async Task<JiraIssue> GetIssue(string key)

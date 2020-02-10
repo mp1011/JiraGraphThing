@@ -7,6 +7,7 @@ using JiraDataLayer.SqLite;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,6 +25,26 @@ namespace Tests.JiraDataLayerTests
             var loaded = await sqliteCache.GetOrCompute(key, async () => (JiraIssue)null);
 
             loaded.Key.Should().Be(key);
+        }
+
+        [Test]
+        public async Task CanCacheWorkLogs()
+        {
+            var fakeLogs = Enumerable.Range(0, 5)
+                .Select(x => new WorkLog("UnitTest", DateTime.Now.AddHours(-1 * x), TimeSpan.FromMinutes(30 * (x + 1))))
+                .ToArray();
+
+            var cache = SimpleIoc.Default.GetInstance<SQLiteCacheProvider>()
+                .CreateArrayCache<WorkLog>();
+
+            var cached = await cache.GetOrCompute("FAKE", async () => fakeLogs);
+
+            var cached2 = await cache.GetOrCompute("FAKE", async () => null);
+
+            cached2.Length.Should().Be(fakeLogs.Length);
+            cached2.Sum(p => p.TimeSpent.TotalSeconds)
+                .Should()
+                .Be(fakeLogs.Sum(p => p.TimeSpent.TotalSeconds));
         }
     }
 }

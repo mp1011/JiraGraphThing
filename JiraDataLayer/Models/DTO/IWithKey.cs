@@ -2,7 +2,8 @@
 
 namespace JiraDataLayer.Models.DTO
 {
-    public interface IDTO
+    public interface IWithKey
     {
+        string Key { get; set; }
     }
 }

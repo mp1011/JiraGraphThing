@@ -19,8 +19,13 @@ namespace JiraDataLayer.SqLite
         {
             if (typeof(T) == typeof(SearchResults))
                 return (new SearchResultCache(_dao, _autoMapper, CreateCache<JiraIssue>())) as SQLiteCache<T>;
-            else 
+            else
                 return new SQLiteCache<T>(_dao, _autoMapper);
+        }
+
+        public SQLiteCache<T[]> CreateArrayCache<T>()
+        {
+            return new SQLiteArrayCache<T>(_dao, _autoMapper);        
         }
     }
 }

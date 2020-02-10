@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace JiraDataLayer.Services
 {
-    class AutoMapperService
+    public class AutoMapperService
     {
         private readonly IMapper _mapper;
 
@@ -14,8 +14,15 @@ namespace JiraDataLayer.Services
         {
             var config = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<JiraIssue, JiraIssueDTO>();
-                cfg.CreateMap<JiraIssueDTO, JiraIssue>();
+                cfg.CreateMap<JiraIssue, JiraIssueDTO>().ReverseMap();
+
+                cfg.CreateMap<WorkLog, WorkLogDTO>(MemberList.Destination)
+                    .ForMember(x => x.TimeSpentInSeconds, x => x.MapFrom(y => (int)y.TimeSpent.TotalSeconds));
+
+                cfg.CreateMap<WorkLogDTO, WorkLog>(MemberList.Destination)
+                    .ForMember(x => x.TimeSpent, x => x.MapFrom(y => TimeSpan.FromSeconds(y.TimeSpentInSeconds)));
+
+
             });
 
             _mapper = config.CreateMapper();

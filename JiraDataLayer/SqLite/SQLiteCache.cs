@@ -9,7 +9,7 @@ namespace JiraDataLayer.Cache
     public class SQLiteCache<T> : ICache<T>
     {
         protected readonly SQLiteDAO _dao;
-        private readonly AutoMapperService _autoMapperService;
+        protected readonly AutoMapperService _autoMapperService;
 
         internal SQLiteCache(SQLiteDAO dao, AutoMapperService autoMapperService)
         {

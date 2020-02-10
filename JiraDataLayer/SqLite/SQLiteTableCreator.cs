@@ -57,6 +57,8 @@ namespace JiraDataLayer.SqLite
                 return "REAL";
             else if (dotNetType == typeof(string))
                 return "TEXT";
+            else if (dotNetType == typeof(DateTime))
+                return "TEXT";
             else if(dotNetType.IsGenericType && dotNetType.GetGenericTypeDefinition() == typeof(Nullable<>))
                 return ToSqliteType(dotNetType.GetGenericArguments()[0]);
             else 

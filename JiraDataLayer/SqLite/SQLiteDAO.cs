@@ -24,8 +24,12 @@ namespace JiraDataLayer.SqLite
             return this.InvokeGenericMethod(nameof(ReadFirst), t, whereClause,args);
         }
 
+        public object[] Read(Type type, string whereClause, object args = null)
+        {
+            return (object[])this.InvokeGenericMethod(nameof(Read), type, whereClause, args);
+        }
+
         public T[] Read<T>(string whereClause, object args=null)
-            where T:IDTO
         {
             using (var conn = _sqliteConnectionProvider.CreateConnection())
             {
@@ -46,7 +50,6 @@ namespace JiraDataLayer.SqLite
         }
 
         public T ReadFirst<T>(string whereClause, object args=null)
-          where T : IDTO
         {
             return Read<T>(whereClause, args).FirstOrDefault();
         }
@@ -72,6 +75,8 @@ namespace JiraDataLayer.SqLite
                         return "null";
                     else if (propertyValue is string s)
                         return $"'{s}'";
+                    else if (propertyValue is DateTime dt)
+                        return $"'{dt.ToString("yyyy-MM-dd hh:mm:ss")}'";
                     else
                         return propertyValue.ToString();
                 }).ToArray();

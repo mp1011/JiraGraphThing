@@ -3,7 +3,7 @@
 namespace JiraDataLayer.Models.DTO
 {
     [Table("JiraIssue")]
-    public class JiraIssueDTO : IDTO
+    public class JiraIssueDTO : IWithKey
     {
         public string Key { get; set; }
 

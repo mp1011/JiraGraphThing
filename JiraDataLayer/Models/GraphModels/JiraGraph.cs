@@ -12,6 +12,8 @@ namespace JiraDataLayer.Models.GraphModels
 
         public abstract IEnumerable<WorkLog> GetWorkLogs();
 
+        public abstract string Name { get; }
+
         public TimeSpan GetTotalTimeSpent()
         {
             return TimeSpan.FromSeconds(GetWorkLogs().Sum(p => p.TimeSpent.TotalSeconds));

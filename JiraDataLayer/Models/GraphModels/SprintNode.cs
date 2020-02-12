@@ -12,6 +12,8 @@ namespace JiraDataLayer.Models.GraphModels
             Sprint = sprint;
         }
 
+        public override string Name => Sprint;
+
         public override decimal GetTotalStoryPoints()
         {
             return Children.Sum(p => p.GetTotalStoryPoints());

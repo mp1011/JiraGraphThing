@@ -31,7 +31,7 @@ namespace JiraGraphThing.ViewModels
             }
         }
 
-        public ObservableCollection<IssueNode> SprintIssues { get; } = new ObservableCollection<IssueNode>();
+        public ObservableCollection<JiraGraph> SprintNodes { get; } = new ObservableCollection<JiraGraph>();
 
         public SprintProgressViewModel(JiraGraphBuilder jiraGraphBuilder)
         {
@@ -47,10 +47,12 @@ namespace JiraGraphThing.ViewModels
         public async void Initialize(string sprintName)
         {
             SprintName = sprintName;
-            SprintIssues.Clear();
+            SprintNodes.Clear();
             var sprintNode = await _jiraGraphBuilder.LoadSprintGraph(sprintName);
+
+            SprintNodes.Add(sprintNode);
             foreach (var item in sprintNode.Children)
-                SprintIssues.Add(item);
+                SprintNodes.Add(item);
         }
     }
 }

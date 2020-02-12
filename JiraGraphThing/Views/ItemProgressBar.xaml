@@ -28,7 +28,11 @@
                 />
         </Frame>
         <Frame Grid.Column="1" HorizontalContentAlignment="Left" x:Name="ProgressBarHolder">
-            <Rectangle x:Name="TimeUsedProgressBar" Height="10" Fill="Red"></Rectangle>
+            <Canvas>
+                <Frame x:Name="TimeEstimatedProgressBar" Height="20" BorderBrush="Black" BorderThickness="2"  />
+                <Rectangle x:Name="TimeUsedProgressBar" Height="10" Fill="Red"/>
+            </Canvas>
+            
         </Frame>
     </Grid>
                

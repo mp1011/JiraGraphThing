@@ -6,36 +6,29 @@ namespace JiraGraphThing.ViewModels
 {
     public class ItemProgressBarViewModel : ViewModelBase
     {
-        private IssueNode _issueNode;
+        public const int MinutesPerStoryPoint = 6 * 60;
+        public const int MaxBarMinutes = 60 * 6 * 5;
+
+        private JiraGraph _node;
 
         public string Title
         {
-            get => _issueNode?.Issue?.Key ?? string.Empty;           
+            get => _node == null ? string.Empty : _node.Name;           
         }
 
-        public decimal PercentTimeUsed
-        {
-            get
-            {
-                if (_issueNode == null)
-                    return 0;
+        public int MinutesEstimated => _node == null ? 0 : (int)(_node.GetTotalStoryPoints() * 60 * 6); //todo, make a setting
 
-                var totalTimeUsed = _issueNode.GetTotalTimeSpent().TotalHours;
-                var timeExpected = _issueNode.GetTotalStoryPoints() * 6; //todo, makea setting
-                if (timeExpected > 0)
-                    return (decimal)totalTimeUsed / timeExpected;
-                else
-                    return 0;
-            }
-        }
+        public int MinutesLogged => _node == null ? 0 : (int)_node.GetTotalTimeSpent().TotalMinutes;
 
-        public void Initialize(IssueNode issueNode)
+        public bool IsIssue => _node is IssueNode;
+        public bool IsSprint => _node is SprintNode;
+
+        public void Initialize(JiraGraph node)
         {
-            if(issueNode != null && issueNode != _issueNode)
+            if(node != null && node != _node)
             {
-                _issueNode = issueNode;
+                _node = node;
                 RaisePropertyChanged(nameof(Title));
-                RaisePropertyChanged(nameof(PercentTimeUsed));
             }
         }
     }

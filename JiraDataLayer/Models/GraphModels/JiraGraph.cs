@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace JiraDataLayer.Models.GraphModels
@@ -10,6 +11,11 @@ namespace JiraDataLayer.Models.GraphModels
         public abstract decimal GetTotalStoryPoints();
 
         public abstract IEnumerable<WorkLog> GetWorkLogs();
+
+        public TimeSpan GetTotalTimeSpent()
+        {
+            return TimeSpan.FromSeconds(GetWorkLogs().Sum(p => p.TimeSpent.TotalSeconds));
+        }
 
         public bool Contains(JiraGraph search)
         {

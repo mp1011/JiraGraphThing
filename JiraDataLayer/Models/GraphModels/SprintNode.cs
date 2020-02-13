@@ -14,15 +14,7 @@ namespace JiraDataLayer.Models.GraphModels
 
         public override string Name => Sprint;
 
-        public override decimal GetTotalStoryPoints()
-        {
-            return Children.Sum(p => p.GetTotalStoryPoints());
-        }
-
-        public override IEnumerable<WorkLog> GetWorkLogs()
-        {
-            return Children.SelectMany(p => p.GetWorkLogs());
-        }
+        
 
         public override string ToString()
         {

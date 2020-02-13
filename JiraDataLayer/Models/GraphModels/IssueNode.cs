@@ -18,24 +18,29 @@ namespace JiraDataLayer.Models.GraphModels
 
         public override string Name => Issue.Key;
 
+        public override string[] GetAssociatedUsers()
+        {
+            List<string> users = new List<string>();
+            users.Add(Issue.Assignee);
+            users.AddRange(base.GetAssociatedUsers());
+            return users.Distinct().ToArray();
+        }
+        public bool IsAnyAssignedTo(string user)
+        {
+            if (Issue.Assignee == user)
+                return true;
+            else
+                return Children.Any(c => c.IsAnyAssignedTo(user));
+        }
+
         public override decimal GetTotalStoryPoints()
         {
-            return Issue.StoryPoints.GetValueOrDefault() +
-                Children.Sum(p => p.GetTotalStoryPoints());
+            return Issue.StoryPoints.GetValueOrDefault() + base.GetTotalStoryPoints();
         }
 
         public override IEnumerable<WorkLog> GetWorkLogs()
         {
-            foreach (var log in WorkLogs)
-                yield return log;
-
-            foreach(var child in Children)
-            {
-                foreach(var log in child.GetWorkLogs())
-                {
-                    yield return log;
-                }
-            }
+            return WorkLogs.Union(base.GetWorkLogs());
         }
 
         public override string ToString()

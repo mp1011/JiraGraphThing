@@ -33,5 +33,13 @@ namespace Tests.JiraDataLayerTests
             var graph = await graphBuilder.LoadSprintGraph(sprint);
             graph.Children.Length.Should().BeGreaterThan(0);
         }
+
+        [TestCase("DSDE Sprint 21")]
+        public async Task CanLoadUserSprintGraph(string sprint)
+        {
+            var graphBuilder = SimpleIoc.Default.GetInstance<JiraGraphBuilder>();
+            var graph = await graphBuilder.LoadUserSprintGraph(sprint);
+            graph.Children.Length.Should().BeGreaterThan(0);
+        }
     }
 }

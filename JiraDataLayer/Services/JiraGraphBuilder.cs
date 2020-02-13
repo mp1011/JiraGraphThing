@@ -28,6 +28,46 @@ namespace JiraDataLayer.Services
             return await ConstructNode(parent, new NonCache<IssueNode>());
         }
 
+        public async Task<UserSprintNode> LoadUserSprintGraph(string sprint)
+        {
+            var sprintNode = await LoadSprintGraph(sprint);
+
+            var users = sprintNode.GetAssociatedUsers();
+
+            var userNodes = users
+                .Select(u => ExtractUserNode(sprintNode, u))
+                .ToArray();
+
+            return new UserSprintNode(sprint, userNodes);
+        }
+
+        private UserNode ExtractUserNode(SprintNode sprint, string user)
+        {
+            return new UserNode(user, ExtractForUser(user, sprint.Children));
+        }
+
+        private IEnumerable<IssueNode> ExtractForUser(string user, IEnumerable<IssueNode> nodes)
+        {
+            List<IssueNode> filtered = new List<IssueNode>();
+            foreach(var node in nodes)
+            {
+                var extracted = ExtractForUser(user, node);
+                if (extracted.GetWorkLogs().Any() || extracted.IsAnyAssignedTo(user))
+                    filtered.Add(extracted);
+            }
+
+            return filtered;
+        }
+
+        private IssueNode ExtractForUser(string user, IssueNode node)
+        {
+            var userWorkLogs = node.WorkLogs
+                .Where(p => p.Author == user)
+                .ToArray();
+
+            return new IssueNode(node.Issue, userWorkLogs, ExtractForUser(user, node.Children));
+        }
+
         public async Task<SprintNode> LoadSprintGraph(string sprint)
         {
             OnProgressChanged?.Invoke($"Loading issues for {sprint}",0);

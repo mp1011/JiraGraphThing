@@ -19,6 +19,8 @@ namespace JiraDataLayer.Models
 
         public string Sprint { get; private set; }
 
+        public string Assignee { get; private set; }
+
         public decimal? StoryPoints { get; private set; }
 
         internal JiraIssue()
@@ -29,7 +31,7 @@ namespace JiraDataLayer.Models
         {
             Key = issue.Key.Value;
             Project = issue.Project;
-
+            Assignee = issue.Assignee;
             EpicKey = customFieldReader.ReadCustomField<EpicLink>(issue)?.Key;
             StoryPoints = customFieldReader.ReadCustomField<StoryPoints>(issue)?.Value;
             Sprint = customFieldReader.ReadCustomField<Sprint>(issue)?.Name;

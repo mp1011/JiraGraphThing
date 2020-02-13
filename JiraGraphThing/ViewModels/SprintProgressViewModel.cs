@@ -48,7 +48,7 @@ namespace JiraGraphThing.ViewModels
         {
             SprintName = sprintName;
             SprintNodes.Clear();
-            var sprintNode = await _jiraGraphBuilder.LoadSprintGraph(sprintName);
+            var sprintNode = await _jiraGraphBuilder.LoadUserSprintGraph(sprintName);
 
             SprintNodes.Add(sprintNode);
             foreach (var item in sprintNode.Children)

@@ -17,6 +17,9 @@ namespace JiraDataLayer.SqLite
         {
             _sqliteConnectionProvider = sqliteConnectionProvider;
             _sqliteTableCreator = sqliteTableCreator;
+
+            using (var conn = sqliteConnectionProvider.CreateConnection())
+                _sqliteTableCreator.EnsureTablesCreated(conn);
         }
 
         public object ReadFirst(Type t, string whereClause, object args)
@@ -33,7 +36,7 @@ namespace JiraDataLayer.SqLite
         {
             using (var conn = _sqliteConnectionProvider.CreateConnection())
             {
-                var tableName = _sqliteTableCreator.EnsureTableCreated<T>(conn);
+                var tableName = _sqliteTableCreator.GetTableName<T>();
                 return conn.Query<T>($"SELECT ROWID,* FROM {tableName} WHERE {whereClause}", args)
                     .ToArray();             
             }
@@ -43,7 +46,7 @@ namespace JiraDataLayer.SqLite
         {
             using (var conn = _sqliteConnectionProvider.CreateConnection())
             {
-                var tableName = _sqliteTableCreator.EnsureTableCreated<T>(conn);
+                var tableName = _sqliteTableCreator.GetTableName<T>();
                 var id= conn.ExecuteScalar<int>($"SELECT ROWID FROM {tableName} WHERE {whereClause}", args);
                 return id;
             }
@@ -56,40 +59,43 @@ namespace JiraDataLayer.SqLite
 
         public void Write<T>(T value)
         {
-            using (var conn = _sqliteConnectionProvider.CreateConnection())
+            lock (this)
             {
-                var tableName = _sqliteTableCreator.EnsureTableCreated<T>(conn);
-
-                //dapper.contrib insert doesn't work
-                var properties = typeof(T)
-                    .GetProperties()
-                    .Where(p => p.Name != "ROWID")
-                    .ToArray();
-
-                var fieldNames = properties
-                    .Select(p => p.Name).ToArray();
-                var fieldValues = properties.Select(p =>
+                using (var conn = _sqliteConnectionProvider.CreateConnection())
                 {
-                    var propertyValue = p.GetValue(value);
-                    if (propertyValue == null)
-                        return "null";
-                    else if (propertyValue is string s)
-                        return $"'{s}'";
-                    else if (propertyValue is DateTime dt)
-                        return $"'{dt.ToString("yyyy-MM-dd hh:mm:ss")}'";
-                    else
-                        return propertyValue.ToString();
-                }).ToArray();
+                    var tableName = _sqliteTableCreator.GetTableName<T>();
 
-                var insertScript = new StringBuilder()
-                    .Append($"INSERT INTO {tableName} (")
-                    .Append(string.Join(",", fieldNames))
-                    .Append(") VALUES (")
-                    .Append(string.Join(",", fieldValues))
-                    .Append(");")
-                    .ToString();
+                    //dapper.contrib insert doesn't work
+                    var properties = typeof(T)
+                        .GetProperties()
+                        .Where(p => p.Name != "ROWID")
+                        .ToArray();
 
-                conn.ExecuteScalar(insertScript);
+                    var fieldNames = properties
+                        .Select(p => p.Name).ToArray();
+                    var fieldValues = properties.Select(p =>
+                    {
+                        var propertyValue = p.GetValue(value);
+                        if (propertyValue == null)
+                            return "null";
+                        else if (propertyValue is string s)
+                            return $"'{s}'";
+                        else if (propertyValue is DateTime dt)
+                            return $"'{dt.ToString("yyyy-MM-dd hh:mm:ss")}'";
+                        else
+                            return propertyValue.ToString();
+                    }).ToArray();
+
+                    var insertScript = new StringBuilder()
+                        .Append($"INSERT INTO {tableName} (")
+                        .Append(string.Join(",", fieldNames))
+                        .Append(") VALUES (")
+                        .Append(string.Join(",", fieldValues))
+                        .Append(");")
+                        .ToString();
+
+                    conn.ExecuteScalar(insertScript);
+                }
             }
         }
     }

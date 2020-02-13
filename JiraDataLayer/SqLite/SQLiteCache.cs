@@ -47,7 +47,7 @@ namespace JiraDataLayer.Cache
         protected virtual void Write(string key, T value)
         {
             var dto = _autoMapperService.Map(value);
-            _dao.InvokeGenericMethod(nameof(_dao.Write), value.GetType(), value);
+            _dao.InvokeGenericMethod(nameof(_dao.Write), dto.GetType(), dto);
         }
     }
 }

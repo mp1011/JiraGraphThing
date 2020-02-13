@@ -46,14 +46,14 @@ namespace Tests.JiraDataLayerTests
             count.Should().Be(1);
         }
 
-        [TestCase("DSDE-3197", "DSDE Sprint 22")]
+        [TestCase("DSDE-2997", "DSDE Sprint 21")]
         public async Task CanReadSprint(string key, string expectedSprint)
         {
             var service = SimpleIoc.Default.GetInstance<JiraIssueService>();
             (await service.GetIssue(key)).Sprint.Should().Be(expectedSprint);
         }
 
-        [TestCase("DSDE-3197", 2.0)]
+        [TestCase("DSDE-2997", 2.0)]
         public async Task CanReadStoryPoints(string key, decimal expectedStoryPoints)
         {
             var service = SimpleIoc.Default.GetInstance<JiraIssueService>();
@@ -90,7 +90,7 @@ namespace Tests.JiraDataLayerTests
             count.Should().Be(expectedChildren);
         }
 
-        [TestCase("DSDE-3197", 5)]
+        [TestCase("DSDE-3197", 7)]
         public async Task CanReadLoggedHours(string key, double expectedHours)
         {
             var service = SimpleIoc.Default.GetInstance<JiraIssueService>();

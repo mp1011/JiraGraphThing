@@ -14,9 +14,25 @@ namespace JiraDataLayer.Models.GraphModels
 
         public abstract string Name { get; }
 
+        public abstract string[] GetAssociatedUsers();
+
         public TimeSpan GetTotalTimeSpent()
         {
             return TimeSpan.FromSeconds(GetWorkLogs().Sum(p => p.TimeSpent.TotalSeconds));
+        }
+
+        public IEnumerable<JiraGraph> TraverseAll()
+        {
+            List<JiraGraph> list = new List<JiraGraph>();
+            TraverseAll(list);
+            return list;
+        }
+
+        private void TraverseAll(List<JiraGraph> list)
+        {
+            list.Add(this);
+            foreach (var child in GetChildren())
+                TraverseAll(list);
         }
 
         public bool Contains(JiraGraph search)
@@ -47,6 +63,34 @@ namespace JiraDataLayer.Models.GraphModels
         public override IEnumerable<JiraGraph> GetChildren()
         {
             return Children;
+        }
+
+        public override decimal GetTotalStoryPoints()
+        {
+            return Children.Sum(p => p.GetTotalStoryPoints());
+        }
+
+        public override IEnumerable<WorkLog> GetWorkLogs()
+        {
+            return Children.SelectMany(p => p.GetWorkLogs());
+        }
+
+        public override string[] GetAssociatedUsers()
+        {
+            var usersFromWorkLogs = GetWorkLogs()
+                .Select(p => p.Author)
+                .Distinct()
+                .ToArray();
+
+            var usersFromChildren = Children
+                .SelectMany(p => p.GetAssociatedUsers())
+                .Distinct()
+                .ToArray();
+
+            return usersFromChildren
+                .Union(usersFromWorkLogs)
+                .Distinct()
+                .ToArray();
         }
     }
 }

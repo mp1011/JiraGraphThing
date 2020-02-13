@@ -34,8 +34,7 @@ namespace JiraGraphThing
         public App()
         {
             this.InitializeComponent();
-            this.Suspending += OnSuspending;
-            IOC.DIRegistrar.RegisterTypes();            
+            this.Suspending += OnSuspending;       
         }
 
         /// <summary>
@@ -46,6 +45,7 @@ namespace JiraGraphThing
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
             DataConfig.DataPath = ApplicationData.Current.LocalFolder.Path;
+            IOC.DIRegistrar.RegisterTypes();
             Frame rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,

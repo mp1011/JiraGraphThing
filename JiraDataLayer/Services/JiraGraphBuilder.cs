@@ -65,7 +65,11 @@ namespace JiraDataLayer.Services
                 .Where(p => p.Author == user)
                 .ToArray();
 
-            return new IssueNode(node.Issue, userWorkLogs, ExtractForUser(user, node.Children));
+            if(node.Issue.Assignee == user)
+                return new IssueNode(node.Issue, userWorkLogs, ExtractForUser(user, node.Children));
+            else
+                return new IssueNode(node.Issue.RemoveStoryPoints(), userWorkLogs, ExtractForUser(user, node.Children));
+
         }
 
         public async Task<SprintNode> LoadSprintGraph(string sprint)
@@ -96,6 +100,9 @@ namespace JiraDataLayer.Services
             return await (cache.GetOrCompute(issue.Key, async () =>
             {
                 var logs = await _jiraIssueService.GetWorkLogs(issue.Key).AttachErrorHandler();
+
+                //hack - need to query the duration of the sprint
+                logs = logs.Where(p => p.Start >= new DateTime(2020, 1, 30)).ToArray();
                 return new IssueNode(issue, logs, await LoadChildren<IssueNode>(issue,cache).AttachErrorHandler());
             })).AttachErrorHandler();
         }

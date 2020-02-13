@@ -21,6 +21,8 @@ namespace JiraDataLayer.Models
 
         public string Assignee { get; private set; }
 
+        public string Summary { get; private set; }
+
         public decimal? StoryPoints { get; private set; }
 
         internal JiraIssue()
@@ -30,6 +32,7 @@ namespace JiraDataLayer.Models
         internal JiraIssue(Issue issue, CustomFieldReader customFieldReader)
         {
             Key = issue.Key.Value;
+            Summary = issue.Summary;
             Project = issue.Project;
             Assignee = issue.Assignee;
             EpicKey = customFieldReader.ReadCustomField<EpicLink>(issue)?.Key;
@@ -41,9 +44,25 @@ namespace JiraDataLayer.Models
             
         }
 
+        //hack
+        public JiraIssue RemoveStoryPoints()
+        {
+            return new JiraIssue
+            {
+                Assignee = Assignee,
+                EpicKey = EpicKey,
+                ParentKey = ParentKey,
+                Project = Project,
+                Sprint = Sprint,
+                Summary = Summary,
+                TypeName = TypeName,
+                Key = Key
+            };
+        }
+
         public override string ToString()
         {
-            return $"{TypeName} {Key}";
+            return $"{Key} {Summary}";
         }
     }
 }

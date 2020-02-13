@@ -16,7 +16,7 @@ namespace JiraDataLayer.Models.GraphModels
             WorkLogs = workLogs;
         }
 
-        public override string Name => Issue.Key;
+        public override string Name => Issue.ToString();
 
         public override string[] GetAssociatedUsers()
         {

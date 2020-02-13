@@ -11,7 +11,7 @@ namespace JiraGraphThing.Services
 
         public void NavigateToMainPage()
         {
-            AppFrame.Navigate(typeof(SprintProgress), "DSDE Sprint 21");
+            AppFrame.Navigate(typeof(SprintProgress), "DSDE Sprint 22");
         }
     }
 }

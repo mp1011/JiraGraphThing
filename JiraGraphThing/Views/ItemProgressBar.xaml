@@ -17,13 +17,15 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200"/>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="250"/>
         </Grid.ColumnDefinitions>
         <Frame 
                Grid.Column="0"                
                VerticalContentAlignment="Center"
                VerticalAlignment="Stretch">
             <TextBlock  
-                FontSize="20"
+                FontSize="12"
+                TextWrapping="Wrap"
                 Text="{x:Bind ViewModel.Title, Mode=OneWay}"
                 />
         </Frame>
@@ -32,8 +34,11 @@
                 <Frame x:Name="TimeEstimatedProgressBar" Height="20" BorderBrush="Black" BorderThickness="2"  />
                 <Rectangle x:Name="TimeUsedProgressBar" Height="10" Fill="Red"/>
             </Canvas>
-            
         </Frame>
+        <TextBlock Grid.Column="2">
+            <Run Text="{x:Bind ViewModel.MinutesLogged, Mode=OneWay}"/> /
+            <Run Text="{x:Bind ViewModel.MinutesEstimated, Mode=OneWay}"/> mins logged / estimated
+        </TextBlock>
     </Grid>
                
 </UserControl>

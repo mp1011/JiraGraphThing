@@ -8,10 +8,5 @@ namespace JiraGraphThing.Core.Extensions
         {
             return !string.IsNullOrEmpty(s);
         }
-
-        public static string AlphaNumericOnly(this string s)
-        {
-            return Regex.Replace(s,@"[^\w]", "");
-        }
     }
 }

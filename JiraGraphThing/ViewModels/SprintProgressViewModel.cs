@@ -2,6 +2,7 @@
 using JiraDataLayer.Models.GraphModels;
 using JiraDataLayer.Services;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace JiraGraphThing.ViewModels
 {
@@ -52,7 +53,16 @@ namespace JiraGraphThing.ViewModels
 
             SprintNodes.Add(sprintNode);
             foreach (var item in sprintNode.Children)
+            {
                 SprintNodes.Add(item);
+
+                foreach (var issue in item.Children
+                    .Where(p => p.GetTotalStoryPoints() > 0 || p.GetTotalTimeSpent().TotalMinutes > 0)
+                    .OrderByDescending(c => c.GetTotalStoryPoints()))
+                {
+                    SprintNodes.Add(issue);
+                }
+            }
         }
     }
 }

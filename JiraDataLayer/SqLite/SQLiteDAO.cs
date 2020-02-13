@@ -73,19 +73,8 @@ namespace JiraDataLayer.SqLite
 
                     var fieldNames = properties
                         .Select(p => p.Name).ToArray();
-                    var fieldValues = properties.Select(p =>
-                    {
-                        var propertyValue = p.GetValue(value);
-                        if (propertyValue == null)
-                            return "null";
-                        else if (propertyValue is string s)
-                            return $"'{s}'";
-                        else if (propertyValue is DateTime dt)
-                            return $"'{dt.ToString("yyyy-MM-dd hh:mm:ss")}'";
-                        else
-                            return propertyValue.ToString();
-                    }).ToArray();
-
+                    var fieldValues = properties.Select(p => "@" + p.Name).ToArray();
+                    
                     var insertScript = new StringBuilder()
                         .Append($"INSERT INTO {tableName} (")
                         .Append(string.Join(",", fieldNames))
@@ -94,7 +83,7 @@ namespace JiraDataLayer.SqLite
                         .Append(");")
                         .ToString();
 
-                    conn.ExecuteScalar(insertScript);
+                    conn.ExecuteScalar(insertScript, value);
                 }
             }
         }

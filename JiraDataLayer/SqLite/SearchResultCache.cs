@@ -23,7 +23,7 @@ namespace JiraDataLayer.SqLite
 
         protected override SearchResults Read(string key)
         {
-            var cached = _dao.ReadFirst<JQLSearchDTO>("JQL=@jql", new { jql = key.AlphaNumericOnly() });
+            var cached = _dao.ReadFirst<JQLSearchDTO>("JQL=@jql", new { jql = key });
             if (cached != null)
             {
                 var results = _dao.Read<JQLSearchItemDTO>("SearchID=@id", new { id = cached.ROWID });
@@ -38,12 +38,12 @@ namespace JiraDataLayer.SqLite
         {
             _dao.Write(new JQLSearchDTO
             {
-                JQL = value.JQL.AlphaNumericOnly(),
+                JQL = value.JQL,
                 Take = value.MaxRecords
             });
 
             //last_insert_rowid() isnt working, don't know why
-            var id = _dao.GetRowID<JQLSearchDTO>($"JQL='{value.JQL.AlphaNumericOnly()}'");
+            var id = _dao.GetRowID<JQLSearchDTO>($"JQL=@JQL", new{ value.JQL});
 
             foreach(var item in value.Items)
             {

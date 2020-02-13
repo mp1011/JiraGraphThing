@@ -19,6 +19,7 @@ namespace JiraDataLayer.Models.DTO
 
         public string Assignee { get; set; }
 
+        public string Summary { get; set; }
         public decimal StoryPoints { get; set; }
     }
 }

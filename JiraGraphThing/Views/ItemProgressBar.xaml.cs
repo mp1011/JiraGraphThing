@@ -33,26 +33,15 @@ namespace JiraGraphThing.Views
 
         private void UpdateProgressBarWidth()
         {
-            if (ViewModel.IsIssue)
-            {
-                TimeUsedProgressBar.Width = GetProgressBarWidthFromPercentage((double)ViewModel.MinutesLogged / ItemProgressBarViewModel.MaxBarMinutes);
-                TimeEstimatedProgressBar.Width = GetProgressBarWidthFromPercentage((double)ViewModel.MinutesEstimated / ItemProgressBarViewModel.MaxBarMinutes);
-            }
-            else if(ViewModel.IsSprint)
-            {
-                TimeUsedProgressBar.Width = GetProgressBarWidthFromPercentage((double)ViewModel.MinutesLogged / (double)ViewModel.MinutesEstimated);
-                TimeEstimatedProgressBar.Width = GetProgressBarWidthFromPercentage(1.0);
-            }
+            if (ProgressBarHolder.ActualWidth <= 0)
+                return;
+
+            TimeEstimatedProgressBar.Width = ProgressBarHolder.ActualWidth * ((double)ViewModel.MinutesEstimated / ViewModel.MaxBarMinutes);
+            TimeUsedProgressBar.Width = (ProgressBarHolder.ActualWidth-10) * ((double)ViewModel.MinutesLogged / ViewModel.MaxBarMinutes);
 
             TimeUsedProgressBar.Translation = new Vector3(5, 
                 (float)(TimeEstimatedProgressBar.ActualHeight - TimeUsedProgressBar.ActualHeight)/2.0f 
                 , 0);
-
-        }
-
-        private double GetProgressBarWidthFromPercentage(double pct)
-        {
-            return ProgressBarHolder.ActualWidth * pct;
         }
 
         private void ItemProgressBar_DataContextChanged(Windows.UI.Xaml.FrameworkElement sender, Windows.UI.Xaml.DataContextChangedEventArgs args)

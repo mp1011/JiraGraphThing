@@ -10,17 +10,25 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
+    <StackPanel>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="20"/>
             <ColumnDefinition Width="200"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="250"/>
         </Grid.ColumnDefinitions>
+        <HyperlinkButton
+            Visibility="{x:Bind ViewModel.HasChildren, Mode=OneWay, Converter={StaticResource BooleanToVisibility}}"
+            Grid.Column="0"             
+            Content="{x:Bind ViewModel.Expanded, Mode=OneWay, ConverterParameter='+|-', Converter={StaticResource BooleanToString}}"
+            Command="{x:Bind ViewModel.ExpandOrCollapse}" />
         <Frame 
-               Grid.Column="0"                
+               Grid.Column="1"                
                VerticalContentAlignment="Center"
                VerticalAlignment="Stretch">
             <TextBlock  
@@ -29,16 +37,40 @@
                 Text="{x:Bind ViewModel.Title, Mode=OneWay}"
                 />
         </Frame>
-        <Frame Grid.Column="1" HorizontalContentAlignment="Left" x:Name="ProgressBarHolder">
+        <Frame Grid.Column="2" HorizontalContentAlignment="Left" x:Name="ProgressBarHolder">
             <Canvas>
                 <Frame x:Name="TimeEstimatedProgressBar" Height="20" BorderBrush="Black" BorderThickness="2"  />
                 <Rectangle x:Name="TimeUsedProgressBar" Height="10" Fill="Red"/>
             </Canvas>
         </Frame>
-        <TextBlock Grid.Column="2">
+        <TextBlock Grid.Column="3">
             <Run Text="{x:Bind ViewModel.MinutesLogged, Mode=OneWay}"/> /
             <Run Text="{x:Bind ViewModel.MinutesEstimated, Mode=OneWay}"/> mins logged / estimated
         </TextBlock>
     </Grid>
-               
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <ListView 
+                Visibility="{x:Bind ViewModel.Expanded, Mode=OneWay, Converter={StaticResource BooleanToVisibility}}"
+                Grid.Row="0" 
+            
+                ItemsSource="{x:Bind ViewModel.Children}" 
+                ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <local:ItemProgressBar DataContext="{Binding}"/>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+    </StackPanel>
+    
 </UserControl>

@@ -9,6 +9,8 @@
     <Application.Resources>
         <ResourceDictionary>
             <ioc:ViewModelLocator x:Key="Locator"/>
+            <con:BooleanToVisibility x:Key="BooleanToVisibility"/>
+            <con:BooleanToString x:Key="BooleanToString"/>
         </ResourceDictionary>
     </Application.Resources>
     

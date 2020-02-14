@@ -119,6 +119,8 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\BooleanToString.cs" />
+    <Compile Include="Converters\BooleanToVisibility.cs" />
     <Compile Include="IOC\DIRegistrar.cs" />
     <Compile Include="IOC\ViewModelLocator.cs" />
     <Compile Include="MainPage.xaml.cs">
@@ -194,9 +196,7 @@
       <Name>JiraGraphThing.Core</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Converters\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

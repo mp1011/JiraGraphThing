@@ -24,9 +24,10 @@
             <TextBlock Text="{x:Bind ViewModel.ProgressMessage, Mode=OneWay}"/>
         </StackPanel>
         
-        <ListView Grid.Row="1" 
-                  ItemsSource="{x:Bind ViewModel.SprintNodes}" 
-                  ScrollViewer.VerticalScrollBarVisibility="Auto">
+        <ListView 
+                Grid.Row="1" 
+                ItemsSource="{x:Bind ViewModel.SprintNodes}" 
+                ScrollViewer.VerticalScrollBarVisibility="Auto">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Stretch"/>

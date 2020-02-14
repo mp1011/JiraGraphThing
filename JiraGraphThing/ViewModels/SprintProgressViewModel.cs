@@ -52,17 +52,8 @@ namespace JiraGraphThing.ViewModels
             var sprintNode = await _jiraGraphBuilder.LoadUserSprintGraph(sprintName);
 
             SprintNodes.Add(sprintNode);
-            foreach (var item in sprintNode.Children)
-            {
+            foreach (var item in sprintNode.Children)            
                 SprintNodes.Add(item);
-
-                foreach (var issue in item.Children
-                    .Where(p => p.GetTotalStoryPoints() > 0 || p.GetTotalTimeSpent().TotalMinutes > 0)
-                    .OrderByDescending(c => c.GetTotalStoryPoints()))
-                {
-                    SprintNodes.Add(issue);
-                }
-            }
         }
     }
 }

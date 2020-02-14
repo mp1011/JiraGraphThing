@@ -1,6 +1,8 @@
 ﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using JiraDataLayer.Models.GraphModels;
 using System.Linq;
+using System.Windows.Input;
 
 namespace JiraGraphThing.ViewModels
 {
@@ -11,6 +13,30 @@ namespace JiraGraphThing.ViewModels
 
         private JiraGraph _node;
 
+        public bool HasChildren => _node != null && _node.GetChildren().Any();
+
+        private bool _expanded = false;
+        public bool Expanded
+        {
+            get => _expanded;
+            set
+            {
+                if (_expanded != value)
+                    Set(nameof(Expanded), ref _expanded, value);
+            }
+        }
+
+        public JiraGraph[] Children
+        {
+            get
+            {
+                if (_node == null)
+                    return new JiraGraph[] { };
+                else
+                    return _node.GetChildren().ToArray();
+            }
+        }
+
         public string Title
         {
             get => _node == null ? string.Empty : _node.Name;           
@@ -19,6 +45,13 @@ namespace JiraGraphThing.ViewModels
         public int MinutesEstimated => _node == null ? 0 : (int)(_node.GetTotalStoryPoints() * 60 * 6); //todo, make a setting
 
         public int MinutesLogged => _node == null ? 0 : (int)_node.GetTotalTimeSpent().TotalMinutes;
+
+        private ICommand _expandOrCollapse;
+        public ICommand ExpandOrCollapse => _expandOrCollapse ?? (_expandOrCollapse =
+            new RelayCommand(() =>
+            {
+                Expanded = !Expanded;
+            }));
 
         public void Initialize(JiraGraph node)
         {
@@ -33,6 +66,8 @@ namespace JiraGraphThing.ViewModels
                 RaisePropertyChanged(nameof(Title));
                 RaisePropertyChanged(nameof(MinutesLogged));
                 RaisePropertyChanged(nameof(MinutesEstimated));
+                RaisePropertyChanged(nameof(HasChildren));
+                RaisePropertyChanged(nameof(Expanded));
 
             }
         }

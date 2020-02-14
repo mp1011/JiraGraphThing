@@ -57,7 +57,7 @@
                 Visibility="{x:Bind ViewModel.Expanded, Mode=OneWay, Converter={StaticResource BooleanToVisibility}}"
                 Grid.Row="0" 
             
-                ItemsSource="{x:Bind ViewModel.Children}" 
+                ItemsSource="{x:Bind ViewModel.Children, Mode=OneWay}" 
                 ScrollViewer.VerticalScrollBarVisibility="Auto">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">

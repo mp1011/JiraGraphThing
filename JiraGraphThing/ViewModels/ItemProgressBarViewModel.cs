@@ -1,6 +1,8 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using JiraDataLayer.Models;
 using JiraDataLayer.Models.GraphModels;
+using JiraGraphThing.Models;
 using System.Linq;
 using System.Windows.Input;
 
@@ -8,10 +10,10 @@ namespace JiraGraphThing.ViewModels
 {
     public class ItemProgressBarViewModel : ViewModelBase
     {
-        public const int MinutesPerStoryPoint = 6 * 60;
         public int MaxBarMinutes {get;set;} = 1;
 
         private JiraGraph _node;
+        private Sprint _sprint;
 
         public bool HasChildren => _node != null && _node.GetChildren().Any();
 
@@ -22,18 +24,21 @@ namespace JiraGraphThing.ViewModels
             set
             {
                 if (_expanded != value)
+                {
                     Set(nameof(Expanded), ref _expanded, value);
+                    RaisePropertyChanged(nameof(Children));
+                }
             }
         }
 
-        public JiraGraph[] Children
+        public NodeWithSprint[] Children
         {
             get
             {
                 if (_node == null)
-                    return new JiraGraph[] { };
+                    return new NodeWithSprint[] { };
                 else
-                    return _node.GetChildren().ToArray();
+                    return _node.GetChildren().Select(p=> new NodeWithSprint(p,_sprint)).ToArray();
             }
         }
 
@@ -53,16 +58,18 @@ namespace JiraGraphThing.ViewModels
                 Expanded = !Expanded;
             }));
 
-        public void Initialize(JiraGraph node)
+        public void Initialize(JiraGraph node, Sprint sprint)
         {
             if(node != null && node != _node)
             {                                
                 if (node is SprintNode || node is UserSprintNode)
-                    MaxBarMinutes = (int)(node.GetTotalStoryPoints() * MinutesPerStoryPoint);
+                    MaxBarMinutes = (int)(node.GetTotalStoryPoints() * (decimal)sprint.TimePerStoryPoint.TotalMinutes);
                 else
                     MaxBarMinutes = 10 * 4 * 6 * 60;//should be computed
 
                 _node = node;
+                _sprint = sprint;
+
                 RaisePropertyChanged(nameof(Title));
                 RaisePropertyChanged(nameof(MinutesLogged));
                 RaisePropertyChanged(nameof(MinutesEstimated));

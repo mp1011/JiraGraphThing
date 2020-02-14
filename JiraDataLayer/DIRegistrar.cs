@@ -23,6 +23,8 @@ namespace JiraDataLayer
             SimpleIoc.Default.Register<CustomFieldReader>();
             SimpleIoc.Default.RegisterAllAsArray<ICustomFieldReader>();
             SimpleIoc.Default.RegisterInternal<JiraIssueService>();
+            SimpleIoc.Default.RegisterInternal<SprintService>();
+
         }
     }
 }

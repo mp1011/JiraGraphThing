@@ -9,6 +9,7 @@
     DataContext="{Binding Source={StaticResource Locator}, Path=[SprintProgressViewModel]}"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="100"/>
@@ -19,7 +20,8 @@
         </Grid.ColumnDefinitions>
 
         <StackPanel Grid.Row="0">
-            <TextBlock Text="{x:Bind ViewModel.SprintName}"/>
+            <Button Content="Back" Command="{x:Bind ViewModel.GoBack, Mode=OneWay}" />
+            <TextBlock Text="{x:Bind ViewModel.SprintName, Mode=OneWay}"/>
             <TextBlock Text="{x:Bind ViewModel.SprintNodes.Count, Mode=OneWay}"/>
             <TextBlock Text="{x:Bind ViewModel.ProgressMessage, Mode=OneWay}"/>
         </StackPanel>

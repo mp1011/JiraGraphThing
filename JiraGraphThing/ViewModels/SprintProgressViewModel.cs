@@ -1,14 +1,31 @@
 ﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using JiraDataLayer.Models.GraphModels;
 using JiraDataLayer.Services;
+using JiraGraphThing.Models;
+using JiraGraphThing.Services;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Input;
 
 namespace JiraGraphThing.ViewModels
 {
     public class SprintProgressViewModel : ViewModelBase
     {
         private readonly JiraGraphBuilder _jiraGraphBuilder;
+        private readonly SprintService _sprintService;
+        public SprintProgressViewModel(JiraGraphBuilder jiraGraphBuilder, SprintService sprintService,
+            PageNavigationService navigationService)
+        {
+            _jiraGraphBuilder = jiraGraphBuilder;
+            _jiraGraphBuilder.OnProgressChanged += OnProgressChanged;
+            _sprintService = sprintService;
+
+            GoBack = new RelayCommand(() =>
+            {
+                navigationService.NavigateToMainPage();
+            }, keepTargetAlive:true);
+        }
 
         private string _sprintName;
         public string SprintName
@@ -32,13 +49,9 @@ namespace JiraGraphThing.ViewModels
             }
         }
 
-        public ObservableCollection<JiraGraph> SprintNodes { get; } = new ObservableCollection<JiraGraph>();
+        public ObservableCollection<NodeWithSprint> SprintNodes { get; } = new ObservableCollection<NodeWithSprint>();
 
-        public SprintProgressViewModel(JiraGraphBuilder jiraGraphBuilder)
-        {
-            _jiraGraphBuilder = jiraGraphBuilder;
-            _jiraGraphBuilder.OnProgressChanged += OnProgressChanged;
-        }
+        public ICommand GoBack { get; }
 
         private void OnProgressChanged(string message, decimal progress)
         {
@@ -47,13 +60,14 @@ namespace JiraGraphThing.ViewModels
 
         public async void Initialize(string sprintName)
         {
+            var sprint = await _sprintService.GetSprint(sprintName);
             SprintName = sprintName;
             SprintNodes.Clear();
-            var sprintNode = await _jiraGraphBuilder.LoadUserSprintGraph(sprintName);
+            var sprintNode = await _jiraGraphBuilder.LoadUserSprintGraph(sprint);
 
-            SprintNodes.Add(sprintNode);
+            SprintNodes.Add(new NodeWithSprint(sprintNode, sprint));
             foreach (var item in sprintNode.Children)            
-                SprintNodes.Add(item);
+                SprintNodes.Add(new NodeWithSprint(item, sprint));
         }
     }
 }

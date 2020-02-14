@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace JiraDataLayer.Models.CustomFieldModels
+﻿namespace JiraDataLayer.Models.CustomFieldModels
 {
-    class Sprint
+    class SprintField
     {
         public string Name { get; }
 
-        public Sprint(string name)
+        public SprintField(string name)
         {
             Name = name;
         }

@@ -7,6 +7,7 @@ namespace JiraDataLayer
         string JiraURL { get;  }
         string JiraUsername { get; } 
         string JiraAccessToken { get; }
+        string BoardName { get; }
     }
 
     public class JiraConfig : IJiraConfig
@@ -16,5 +17,8 @@ namespace JiraDataLayer
         public string JiraUsername => AppConfig.GetValue(nameof(JiraUsername), required: true);
 
         public string JiraAccessToken => AppConfig.GetValue(nameof(JiraAccessToken), required: true);
+
+        public string BoardName => AppConfig.GetValue(nameof(BoardName), required: true);
+
     }
 }

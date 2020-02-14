@@ -27,17 +27,19 @@ namespace Tests.JiraDataLayerTests
         }
 
         [TestCase("DSDE Sprint 21")]
-        public async Task CanLoadGraphBySprint(string sprint)
+        public async Task CanLoadGraphBySprint(string sprintName)
         {
             var graphBuilder = SimpleIoc.Default.GetInstance<JiraGraphBuilder>();
+            var sprint = await SimpleIoc.Default.GetInstance<SprintService>().GetSprint(sprintName);
             var graph = await graphBuilder.LoadSprintGraph(sprint);
             graph.Children.Length.Should().BeGreaterThan(0);
         }
 
         [TestCase("DSDE Sprint 21")]
-        public async Task CanLoadUserSprintGraph(string sprint)
+        public async Task CanLoadUserSprintGraph(string sprintName)
         {
             var graphBuilder = SimpleIoc.Default.GetInstance<JiraGraphBuilder>();
+            var sprint = await SimpleIoc.Default.GetInstance<SprintService>().GetSprint(sprintName);
             var graph = await graphBuilder.LoadUserSprintGraph(sprint);
             graph.Children.Length.Should().BeGreaterThan(0);
         }

@@ -22,13 +22,13 @@ namespace JiraDataLayer.Services
             _jiraIssueService = jiraIssueService;
         }
 
-        public async Task<IssueNode> LoadItemGraph(string key)
+        public async Task<IssueNode> LoadItemGraph(string key, Sprint sprint=null)
         {
             var parent = await _jiraIssueService.GetIssue(key);
-            return await ConstructNode(parent, new NonCache<IssueNode>());
+            return await ConstructNode(parent, new NonCache<IssueNode>(), sprint);
         }
 
-        public async Task<UserSprintNode> LoadUserSprintGraph(string sprint)
+        public async Task<UserSprintNode> LoadUserSprintGraph(Sprint sprint)
         {
             var sprintNode = await LoadSprintGraph(sprint);
 
@@ -72,19 +72,19 @@ namespace JiraDataLayer.Services
 
         }
 
-        public async Task<SprintNode> LoadSprintGraph(string sprint)
+        public async Task<SprintNode> LoadSprintGraph(Sprint sprint)
         {
             OnProgressChanged?.Invoke($"Loading issues for {sprint}",0);
 
             var cache = new ConcurrentInMemoryCache<IssueNode>();
             List<IssueNode> sprintNodes = new List<IssueNode>();
 
-            var issues = await _jiraIssueService.GetIssues(new SearchArgs(sprint: sprint));
+            var issues = await _jiraIssueService.GetIssues(new SearchArgs(sprint: sprint.Name));
             int processed = 0;
             foreach (var issue in issues)
             {
                 OnProgressChanged?.Invoke($"Loading {issue.Key}", (decimal)processed / (decimal)issues.Length);
-                sprintNodes.Add(await ConstructNode(issue, cache));
+                sprintNodes.Add(await ConstructNode(issue, cache,sprint));
                 processed++;
             }
 
@@ -95,19 +95,16 @@ namespace JiraDataLayer.Services
             return new SprintNode(sprint, unique);
         }
 
-        private async Task<IssueNode> ConstructNode(JiraIssue issue, ICache<IssueNode> cache)
+        private async Task<IssueNode> ConstructNode(JiraIssue issue, ICache<IssueNode> cache, Sprint sprint)
         {
             return await (cache.GetOrCompute(issue.Key, async () =>
             {
-                var logs = await _jiraIssueService.GetWorkLogs(issue.Key).AttachErrorHandler();
-
-                //hack - need to query the duration of the sprint
-                logs = logs.Where(p => p.Start >= new DateTime(2020, 1, 30)).ToArray();
-                return new IssueNode(issue, logs, await LoadChildren<IssueNode>(issue,cache).AttachErrorHandler());
+                var logs = await _jiraIssueService.GetWorkLogs(issue.Key,sprint).AttachErrorHandler();
+                return new IssueNode(issue, logs, await LoadChildren<IssueNode>(issue,cache,sprint).AttachErrorHandler());
             })).AttachErrorHandler();
         }
 
-        private async Task<T[]> LoadChildren<T>(JiraIssue parent, ICache<IssueNode> cache)
+        private async Task<T[]> LoadChildren<T>(JiraIssue parent, ICache<IssueNode> cache, Sprint sprint)
             where T:JiraGraph
         {
 
@@ -116,7 +113,7 @@ namespace JiraDataLayer.Services
 
             foreach(var child in children)
             {
-                var childNode = await ConstructNode(child,cache).AttachErrorHandler();
+                var childNode = await ConstructNode(child,cache,sprint).AttachErrorHandler();
                 if (childNode is T typedNode)
                     result.Add(typedNode);
                 else 

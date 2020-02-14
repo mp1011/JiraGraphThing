@@ -4,11 +4,11 @@ namespace JiraDataLayer.Models.GraphModels
 {
     public class UserSprintNode : JiraGraph<UserNode>
     {
-        public string Sprint { get; }
+        public Sprint Sprint { get; }
 
-        public override string Name => Sprint;
+        public override string Name => Sprint.Name;
 
-        public UserSprintNode(string sprint, IEnumerable<UserNode> users) : base(users)
+        public UserSprintNode(Sprint sprint, IEnumerable<UserNode> users) : base(users)
         {
             Sprint = sprint;
         }       

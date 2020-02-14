@@ -126,12 +126,18 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\NodeWithSprint.cs" />
+    <Compile Include="Models\SprintTile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\NavigationService.cs" />
     <Compile Include="ViewModels\ItemProgressBarViewModel.cs" />
+    <Compile Include="ViewModels\SprintPickerViewModel.cs" />
     <Compile Include="ViewModels\SprintProgressViewModel.cs" />
     <Compile Include="Views\ItemProgressBar.xaml.cs">
       <DependentUpon>ItemProgressBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SprintPicker.xaml.cs">
+      <DependentUpon>SprintPicker.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SprintProgress.xaml.cs">
       <DependentUpon>SprintProgress.xaml</DependentUpon>
@@ -162,6 +168,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\ItemProgressBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SprintPicker.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

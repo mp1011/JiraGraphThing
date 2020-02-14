@@ -4,16 +4,16 @@ using JiraGraphThing.Core.Extensions;
 
 namespace JiraDataLayer.Services.CustomFieldReaders
 {
-    class SprintFieldReader : ICustomFieldReader<Sprint>
+    class SprintFieldReader : ICustomFieldReader<SprintField>
     {
         public string Field => "Sprint";
 
-        public Sprint ReadValue(CustomFieldValue cf)
+        public SprintField ReadValue(CustomFieldValue cf)
         {
             if (cf == null || cf.Values.IsNullOrEmpty())
                 return null;
             else
-                return new Sprint(cf.Values[0]);
+                return new SprintField(cf.Values[0]);
         }
     }
 }

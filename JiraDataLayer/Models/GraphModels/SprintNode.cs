@@ -5,14 +5,14 @@ namespace JiraDataLayer.Models.GraphModels
 {
     public class SprintNode : JiraGraph<IssueNode>
     {
-        public string Sprint { get; }
+        public Sprint Sprint { get; }
 
-        public SprintNode(string sprint, IEnumerable<IssueNode> children) : base(children)
+        public SprintNode(Sprint sprint, IEnumerable<IssueNode> children) : base(children)
         {
             Sprint = sprint;
         }
 
-        public override string Name => Sprint;
+        public override string Name => Sprint.Name;
 
         
 

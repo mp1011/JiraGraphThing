@@ -71,13 +71,20 @@ namespace JiraDataLayer.Services
             return new SearchResults(jql, originalMaxToTake, results.ToArray());
         }
 
-        public async Task<WorkLog[]> GetWorkLogs(string issueKey)
+        public async Task<WorkLog[]> GetWorkLogs(string issueKey, Sprint sprint = null)
         {
             var client = _jiraClientProvider.CreateClient();
-            var logs = (await client.Issues.GetWorklogsAsync(issueKey)).ToArray();
+            var logs = await _workLogCache.GetOrCompute(issueKey,
+                async () => 
+                (   await client.Issues
+                    .GetWorklogsAsync(issueKey))
+                    .Select(log=>new WorkLog(log))
+                    .ToArray());
 
-            return logs.Select(log => new WorkLog(log))
-                .ToArray();
+            if (sprint != null)
+                logs = logs.Where(p => p.Start >= sprint.Start && p.Start <= sprint.End).ToArray();
+
+            return logs;
         }
 
         public string GetJql(SearchArgs searchArgs)

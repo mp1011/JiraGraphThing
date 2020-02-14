@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
 using JiraDataLayer.Models.GraphModels;
+using JiraGraphThing.Models;
 using JiraGraphThing.ViewModels;
 using System.Numerics;
 using Windows.UI.Xaml.Controls;
@@ -46,8 +47,8 @@ namespace JiraGraphThing.Views
 
         private void ItemProgressBar_DataContextChanged(Windows.UI.Xaml.FrameworkElement sender, Windows.UI.Xaml.DataContextChangedEventArgs args)
         {
-            if (args.NewValue is JiraGraph node)
-                ViewModel.Initialize(node);
+            if (args.NewValue is NodeWithSprint node)
+                ViewModel.Initialize(node.Node, node.Sprint);
         }
     }
 }

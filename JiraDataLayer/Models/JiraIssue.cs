@@ -37,7 +37,7 @@ namespace JiraDataLayer.Models
             Assignee = issue.Assignee;
             EpicKey = customFieldReader.ReadCustomField<EpicLink>(issue)?.Key;
             StoryPoints = customFieldReader.ReadCustomField<StoryPoints>(issue)?.Value;
-            Sprint = customFieldReader.ReadCustomField<Sprint>(issue)?.Name;
+            Sprint = customFieldReader.ReadCustomField<SprintField>(issue)?.Name;
 
             ParentKey = issue.ParentIssueKey ?? EpicKey;
             TypeName = issue.Type.Name;

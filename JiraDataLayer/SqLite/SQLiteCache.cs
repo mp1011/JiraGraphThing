@@ -29,7 +29,8 @@ namespace JiraDataLayer.Cache
             if(result == null || forceCompute)
             {
                 result = await compute(key);
-                Write(key, result);
+                if(result != null)
+                    Write(key, result);
             }
 
             return result;
@@ -48,7 +49,7 @@ namespace JiraDataLayer.Cache
         protected virtual void Write(string key, T value)
         {
             var dto = _autoMapperService.Map(value);
-            _dao.InvokeGenericMethod(nameof(_dao.Write), dto.GetType(), dto);
+            _dao.InvokeGenericMethod(nameof(_dao.Write), dto.GetType(), dto, false);
         }
     }
 }

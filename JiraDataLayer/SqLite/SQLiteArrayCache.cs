@@ -44,11 +44,14 @@ namespace JiraDataLayer.Cache
 
         protected override void Write(string key, T[] value)
         {
-            foreach(var item in value)
+            var mappedType = _autoMapperService.GetMappedType<T>();
+            _dao.Delete(mappedType, "Key=@key", new { key });
+
+            foreach (var item in value)
             {
                 IWithKey dto = _autoMapperService.Map(item) as IWithKey;
                 dto.Key = key;
-                _dao.InvokeGenericMethod(nameof(_dao.Write), dto.GetType(), dto);
+                _dao.Write(mappedType, dto, allowMultipleWithSameKey:true);
             }
 
         }

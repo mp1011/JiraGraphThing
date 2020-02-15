@@ -2,6 +2,7 @@
 using GalaSoft.MvvmLight.Ioc;
 using JiraDataLayer.Cache;
 using JiraDataLayer.Models;
+using JiraDataLayer.Models.DTO;
 using JiraDataLayer.Services;
 using JiraDataLayer.SqLite;
 using NUnit.Framework;
@@ -16,9 +17,28 @@ namespace Tests.JiraDataLayerTests
     class SqLiteTests : TestBase
     {
         [Test]
-        public async Task CanUpdateValueInSqlLite()
+        public void CanUpdateValueInSqlLite()
         {
-            Assert.Fail();
+            var dao = SimpleIoc.Default.GetInstance<SQLiteDAO>();
+
+            var key = "TEST" + Guid.NewGuid().ToString();
+            var testModel = new JQLSearchDTO { JQL = key, Key = key, Take = 10 };
+
+            dao.Write(testModel);
+            dao.Read<JQLSearchDTO>("JQL=@JQL", new { testModel.JQL })
+                .Length
+                .Should()
+                .Be(1);
+
+            testModel.Take = 20;
+            dao.Write(testModel);
+            var read = dao.Read<JQLSearchDTO>("JQL=@JQL", new { testModel.JQL });
+
+            read.Length
+                .Should()
+                .Be(1);
+
+            read[0].Take.Should().Be(20);
         }
 
         [TestCase("DSDE-2995")]

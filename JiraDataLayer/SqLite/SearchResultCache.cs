@@ -38,17 +38,19 @@ namespace JiraDataLayer.SqLite
         {
             _dao.Write(new JQLSearchDTO
             {
+                Key = value.JQL,
                 JQL = value.JQL,
                 Take = value.MaxRecords
             });
 
             //last_insert_rowid() isnt working, don't know why
             var id = _dao.GetRowID<JQLSearchDTO>($"JQL=@JQL", new{ value.JQL});
+            _dao.Delete<JQLSearchItemDTO>("SearchID=@id", new { id });
 
-            foreach(var item in value.Items)
+            foreach (var item in value.Items)
             {
                 Task.Run(()=>_issueCache.GetOrCompute(item.Key, async (k) => item));
-                _dao.Write(new JQLSearchItemDTO { SearchID = id, IssueKey = item.Key });
+                _dao.Write(new JQLSearchItemDTO { Key=id.ToString(), SearchID = id, IssueKey = item.Key }, allowMultipleWithSameKey:true);
             }
 
         }

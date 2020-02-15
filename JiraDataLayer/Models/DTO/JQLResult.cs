@@ -3,7 +3,7 @@
 namespace JiraDataLayer.Models.DTO
 {
     [Table("JQLSearch")]
-    class JQLSearchDTO 
+    public class JQLSearchDTO : IWithKey
     {
         public string Key { get; set; }
         public int ROWID { get; set; }
@@ -13,7 +13,7 @@ namespace JiraDataLayer.Models.DTO
     }
 
     [Table("JQLSearchItem")]
-    class JQLSearchItemDTO 
+    class JQLSearchItemDTO : IWithKey
     {
         public string Key { get; set; }
         public int SearchID { get; set; }

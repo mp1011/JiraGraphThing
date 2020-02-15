@@ -12,7 +12,7 @@ namespace JiraDataLayer.SqLite
     {
         private readonly SQLiteConnectionProvider _sqliteConnectionProvider;
         private readonly SQLiteTableCreator _sqliteTableCreator;
-    
+
         internal SQLiteDAO(SQLiteConnectionProvider sqliteConnectionProvider, SQLiteTableCreator sqliteTableCreator)
         {
             _sqliteConnectionProvider = sqliteConnectionProvider;
@@ -24,7 +24,7 @@ namespace JiraDataLayer.SqLite
 
         public object ReadFirst(Type t, string whereClause, object args)
         {
-            return this.InvokeGenericMethod(nameof(ReadFirst), t, whereClause,args);
+            return this.InvokeGenericMethod(nameof(ReadFirst), t, whereClause, args);
         }
 
         public object[] Read(Type type, string whereClause, object args = null)
@@ -32,13 +32,13 @@ namespace JiraDataLayer.SqLite
             return (object[])this.InvokeGenericMethod(nameof(Read), type, whereClause, args);
         }
 
-        public T[] Read<T>(string whereClause, object args=null)
+        public T[] Read<T>(string whereClause, object args = null)
         {
             using (var conn = _sqliteConnectionProvider.CreateConnection())
             {
                 var tableName = _sqliteTableCreator.GetTableName<T>();
                 return conn.Query<T>($"SELECT ROWID,* FROM {tableName} WHERE {whereClause}", args)
-                    .ToArray();             
+                    .ToArray();
             }
         }
 
@@ -47,20 +47,24 @@ namespace JiraDataLayer.SqLite
             using (var conn = _sqliteConnectionProvider.CreateConnection())
             {
                 var tableName = _sqliteTableCreator.GetTableName<T>();
-                var id= conn.ExecuteScalar<int>($"SELECT ROWID FROM {tableName} WHERE {whereClause}", args);
+                var id = conn.ExecuteScalar<int>($"SELECT ROWID FROM {tableName} WHERE {whereClause}", args);
                 return id;
             }
         }
 
-        public T ReadFirst<T>(string whereClause, object args=null)
+        public T ReadFirst<T>(string whereClause, object args = null)
         {
             return Read<T>(whereClause, args).FirstOrDefault();
         }
 
-        public void Write<T>(T value)
+        public void Write<T>(T value, bool allowMultipleWithSameKey=false)
+            where T : IWithKey
         {
             lock (this)
             {
+                if (string.IsNullOrEmpty(value.Key))
+                    throw new Exception("Object must have a key before it can be saved");
+
                 using (var conn = _sqliteConnectionProvider.CreateConnection())
                 {
                     var tableName = _sqliteTableCreator.GetTableName<T>();
@@ -74,19 +78,56 @@ namespace JiraDataLayer.SqLite
                     var fieldNames = properties
                         .Select(p => p.Name).ToArray();
                     var fieldValues = properties.Select(p => "@" + p.Name).ToArray();
-                    
-                    var insertScript = new StringBuilder()
-                        .Append($"INSERT INTO {tableName} (")
-                        .Append(string.Join(",", fieldNames))
-                        .Append(") VALUES (")
-                        .Append(string.Join(",", fieldValues))
-                        .Append(");")
-                        .ToString();
 
-                    conn.ExecuteScalar(insertScript, value);
+                    var exists = conn.ExecuteScalar<int>(
+                        $"select exists(select 0 from {tableName} where key = @Key)", new { value.Key });
+
+                    if (exists == 0 || allowMultipleWithSameKey)
+                    {
+                        var insertScript = new StringBuilder()
+                            .Append($"INSERT INTO {tableName} (")
+                            .Append(string.Join(",", fieldNames))
+                            .Append(") VALUES (")
+                            .Append(string.Join(",", fieldValues))
+                            .Append(");")
+                            .ToString();
+
+                        conn.ExecuteScalar(insertScript, value);
+                    }
+                    else
+                    {
+                        var fieldAssignments = fieldNames.Select(p => $"{p}=@{p}").ToArray();
+
+                        var updateScript = new StringBuilder()
+                            .Append($"UPDATE {tableName} SET ")
+                            .Append(string.Join(", ", fieldAssignments))
+                            .Append(" WHERE Key = @Key")
+                            .ToString();
+
+                        conn.ExecuteScalar(updateScript, value);
+                    }
                 }
             }
         }
-    }
 
+        public void Write(Type objectType, object value, bool allowMultipleWithSameKey)
+        {
+            this.InvokeGenericMethod(nameof(Write), objectType, value, allowMultipleWithSameKey);
+        }
+
+        public void Delete<T>(string whereClause, object parameter)
+        {
+            var tableName = _sqliteTableCreator.GetTableName<T>();
+
+            using (var conn = _sqliteConnectionProvider.CreateConnection())
+            {
+                conn.Execute($"DELETE FROM {tableName} WHERE {whereClause}", parameter);
+            }
+        }
+
+        public void Delete(Type tableType, string whereClause, object parameter)
+        {
+            this.InvokeGenericMethod(nameof(Delete), tableType, whereClause, parameter);
+        }
+    }
 }

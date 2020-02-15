@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Threading;
 using GalaSoft.MvvmLight.Views;
 using JiraDataLayer;
 using JiraDataLayer.Models;
@@ -29,10 +30,15 @@ namespace JiraGraphThing.ViewModels
         }
 
         public async Task Initialize()
-        {
-            Sprints.Clear();
-            foreach (var sprint in await _sprintService.GetSprints(_boardName))
-                Sprints.Add(new SprintTile(sprint, _navigationService));
+        {            
+            var sprints = await _sprintService.GetSprints(_boardName);
+
+            DispatcherHelper.CheckBeginInvokeOnUI(() =>
+            {
+                Sprints.Clear();
+                foreach (var sprint in sprints)
+                    Sprints.Add(new SprintTile(sprint, _navigationService));
+            });
         }
 
        

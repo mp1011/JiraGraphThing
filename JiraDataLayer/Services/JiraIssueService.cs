@@ -16,13 +16,13 @@ namespace JiraDataLayer.Services
     {
         private readonly CustomFieldReader _customFieldReader;
         private readonly JiraRestClientProvider _jiraClientProvider;
-        private readonly SQLiteCache<SearchResults> _cache;
-        private readonly SQLiteCache<WorkLog[]> _workLogCache;
+        private readonly ICache<SearchResults> _cache;
+        private readonly ICache<WorkLog[]> _workLogCache;
 
         private const int _recordsPerBatch = 100;
         
         internal JiraIssueService(JiraRestClientProvider jiraClientProvider, CustomFieldReader customFieldReader,
-            SQLiteCacheProvider cacheProvider)
+            ICacheProvider cacheProvider)
         {
             _customFieldReader = customFieldReader;
             _jiraClientProvider = jiraClientProvider;
@@ -38,7 +38,7 @@ namespace JiraDataLayer.Services
         public async Task<JiraIssue[]> GetIssues(SearchArgs searchArgs)
         {     
             var jql = GetJql(searchArgs);
-            var results = await _cache.GetOrCompute(jql, () => DoSearch(jql, searchArgs.Take));
+            var results = await _cache.GetOrCompute(jql, (j) => DoSearch(j, searchArgs.Take));
             return results.Items;
         }
 
@@ -75,9 +75,9 @@ namespace JiraDataLayer.Services
         {
             var client = _jiraClientProvider.CreateClient();
             var logs = await _workLogCache.GetOrCompute(issueKey,
-                async () => 
+                async (key) => 
                 (   await client.Issues
-                    .GetWorklogsAsync(issueKey))
+                    .GetWorklogsAsync(key))
                     .Select(log=>new WorkLog(log))
                     .ToArray());
 

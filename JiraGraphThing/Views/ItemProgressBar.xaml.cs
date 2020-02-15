@@ -2,17 +2,17 @@
 using JiraDataLayer.Models.GraphModels;
 using JiraGraphThing.Models;
 using JiraGraphThing.ViewModels;
+using System.ComponentModel;
 using System.Numerics;
+using Windows.UI;
 using Windows.UI.Xaml.Controls;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
 namespace JiraGraphThing.Views
 {
-    public sealed partial class ItemProgressBar : UserControl
+    public sealed partial class ItemProgressBar : UserControl, INotifyPropertyChanged
     {
-        public ItemProgressBarViewModel ViewModel { get; }
-
         public ItemProgressBar()
         {
             this.InitializeComponent();
@@ -21,6 +21,34 @@ namespace JiraGraphThing.Views
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             this.LayoutUpdated += ItemProgressBar_LayoutUpdated;
         }
+
+        public ItemProgressBarViewModel ViewModel { get; }
+
+        public Color BarColor1
+        {
+            get
+            {
+                //should put in a resource
+                if (ViewModel.IsItemCompleted)
+                    return Color.FromArgb(255, 90,199,119);
+                else
+                    return Color.FromArgb(255, 0, 0x78, 0xD4);
+            }
+        }
+
+        public Color BarColor2
+        {
+            get
+            {
+                //should put in a resource
+                if (ViewModel.IsItemCompleted)
+                    return Color.FromArgb(255, 107,219,137);
+                else
+                    return Color.FromArgb(255, 0, 0x88, 0xF4);
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
@@ -38,17 +66,18 @@ namespace JiraGraphThing.Views
                 return;
 
             TimeEstimatedProgressBar.Width = ProgressBarHolder.ActualWidth * ((double)ViewModel.MinutesEstimated / ViewModel.MaxBarMinutes);
-            TimeUsedProgressBar.Width = (ProgressBarHolder.ActualWidth-10) * ((double)ViewModel.MinutesLogged / ViewModel.MaxBarMinutes);
-
-            TimeUsedProgressBar.Translation = new Vector3(5, 
-                (float)(TimeEstimatedProgressBar.ActualHeight - TimeUsedProgressBar.ActualHeight)/2.0f 
-                , 0);
+            TimeUsedProgressBar.Width = ProgressBarHolder.ActualWidth * ((double)ViewModel.MinutesLogged / ViewModel.MaxBarMinutes);  
         }
 
         private void ItemProgressBar_DataContextChanged(Windows.UI.Xaml.FrameworkElement sender, Windows.UI.Xaml.DataContextChangedEventArgs args)
         {
-            if (args.NewValue is NodeWithSprint node)
-                ViewModel.Initialize(node.Node, node.Sprint);
+            if (args.NewValue is UINode node)
+            {
+                ViewModel.Initialize(node);
+                PropertyChanged?.Invoke(this,new PropertyChangedEventArgs(nameof(BarColor1)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BarColor2)));
+
+            }
         }
     }
 }

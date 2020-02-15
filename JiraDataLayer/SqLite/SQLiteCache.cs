@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace JiraDataLayer.Cache
 {
     public class SQLiteCache<T> : ICache<T>
+         where T : class
     {
         protected readonly SQLiteDAO _dao;
         protected readonly AutoMapperService _autoMapperService;
@@ -17,17 +18,17 @@ namespace JiraDataLayer.Cache
             _autoMapperService = autoMapperService;
         }
 
-        public T GetCached(string key)
+        public T GetValueOrDefault(string key)
         {
             return Read(key);
         }
            
-        public async Task<T> GetOrCompute(string key, Func<Task<T>> compute)
+        public async Task<T> GetOrCompute(string key, Func<string, Task<T>> compute, bool forceCompute = false)
         {
             var result = Read(key);
-            if(result == null)
+            if(result == null || forceCompute)
             {
-                result = await compute();
+                result = await compute(key);
                 Write(key, result);
             }
 

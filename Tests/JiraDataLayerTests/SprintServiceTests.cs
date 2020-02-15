@@ -12,7 +12,7 @@ namespace Tests.JiraDataLayerTests
 {
     class SprintServiceTests :TestBase
     {
-        [TestCase("DSDE Sprint 21", "1/16/2020")]
+        [TestCase("DSDE Sprint 21", "1/15/2020")]
         public async Task CanLoadSprint(string sprint, string expectedDate)
         {
             var svc = SimpleIoc.Default.GetInstance<SprintService>();

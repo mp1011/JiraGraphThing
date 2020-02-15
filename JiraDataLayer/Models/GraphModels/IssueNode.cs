@@ -10,10 +10,13 @@ namespace JiraDataLayer.Models.GraphModels
 
         public WorkLog[] WorkLogs { get; }
 
-        public IssueNode(JiraIssue issue, WorkLog[] workLogs, IEnumerable<IssueNode> children) : base(children)
+        public Status Status { get; }
+
+        public IssueNode(JiraIssue issue, WorkLog[] workLogs, Status status, IEnumerable<IssueNode> children) : base(children)
         {
             Issue = issue;
             WorkLogs = workLogs;
+            Status = status;
         }
 
         public override string Name => Issue.ToString();

@@ -15,14 +15,20 @@ namespace Tests.JiraDataLayerTests
 {
     class SqLiteTests : TestBase
     {
+        [Test]
+        public async Task CanUpdateValueInSqlLite()
+        {
+            Assert.Fail();
+        }
+
         [TestCase("DSDE-2995")]
         public async Task CanCacheIssueToSQLite(string key)
         {
             var service = SimpleIoc.Default.GetInstance<JiraIssueService>();
             var cacheProvider = SimpleIoc.Default.GetInstance<SQLiteCacheProvider>();
             var sqliteCache = cacheProvider.CreateCache<JiraIssue>();
-            var issue = await sqliteCache.GetOrCompute(key, async () => await service.GetIssue(key));
-            var loaded = await sqliteCache.GetOrCompute(key, async () => (JiraIssue)null);
+            var issue = await sqliteCache.GetOrCompute(key, async (s) => await service.GetIssue(key));
+            var loaded = await sqliteCache.GetOrCompute(key, async (s) => (JiraIssue)null);
 
             loaded.Key.Should().Be(key);
         }
@@ -37,9 +43,9 @@ namespace Tests.JiraDataLayerTests
             var cache = SimpleIoc.Default.GetInstance<SQLiteCacheProvider>()
                 .CreateArrayCache<WorkLog>();
 
-            var cached = await cache.GetOrCompute("FAKE", async () => fakeLogs);
+            var cached = await cache.GetOrCompute("FAKE", async (s) => fakeLogs);
 
-            var cached2 = await cache.GetOrCompute("FAKE", async () => null);
+            var cached2 = await cache.GetOrCompute("FAKE", async (s) => null);
 
             cached2.Length.Should().Be(fakeLogs.Length);
             cached2.Sum(p => p.TimeSpent.TotalSeconds)

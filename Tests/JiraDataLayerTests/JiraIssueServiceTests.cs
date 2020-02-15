@@ -90,6 +90,17 @@ namespace Tests.JiraDataLayerTests
             count.Should().Be(expectedChildren);
         }
 
+        [TestCase("DSDE-167", "To Do")]
+        [TestCase("DSDE-3186", "IN PROGRESS")]
+        [TestCase("DSDE-3170", "DONE")]
+        public async Task CanReadStatus(string key, string expectedStatus)
+        {
+            var service = SimpleIoc.Default.GetInstance<JiraIssueService>();
+            var issue = await service.GetIssue(key);
+            issue.StatusName.ToString().Should().Be(expectedStatus);
+
+        }
+
         [TestCase("DSDE-3197", 7)]
         public async Task CanReadLoggedHours(string key, double expectedHours)
         {

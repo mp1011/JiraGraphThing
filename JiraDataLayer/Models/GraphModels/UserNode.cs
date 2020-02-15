@@ -11,6 +11,8 @@ namespace JiraDataLayer.Models.GraphModels
         public UserNode(string name, IEnumerable<IssueNode> issues) : base(issues)
         {
             Name = name;
+            if (string.IsNullOrEmpty(Name))
+                Name = "Unassigned";
         }
     }
 }

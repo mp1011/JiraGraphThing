@@ -1,4 +1,5 @@
 ﻿using JiraDataLayer.Models.JiraPocos;
+using JiraGraphThing.Core.Extensions;
 using System;
 
 namespace JiraDataLayer.Models
@@ -19,7 +20,13 @@ namespace JiraDataLayer.Models
         internal Sprint(SprintAPIModel sprintModel, TimeSpan timePerStoryPoint)
         {
             Name = sprintModel.name;
-            Start = sprintModel.startDate;
+
+            //calculate because start date is whenever the start button was pushed
+            if (sprintModel.endDate.Year > 1)
+            {
+                Start = sprintModel.endDate.AddDays(-14)
+                                           .GetMorningTime();
+            }
             End = sprintModel.endDate;
             TimePerStoryPoint = timePerStoryPoint;
         }

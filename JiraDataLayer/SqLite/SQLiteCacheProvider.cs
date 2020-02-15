@@ -4,7 +4,7 @@ using JiraDataLayer.Services;
 
 namespace JiraDataLayer.SqLite
 {
-    public class SQLiteCacheProvider
+    public class SQLiteCacheProvider : ICacheProvider
     {
         private readonly SQLiteDAO _dao;
         private readonly AutoMapperService _autoMapper;
@@ -15,15 +15,18 @@ namespace JiraDataLayer.SqLite
             _autoMapper = autoMapper;
         }
 
-        public SQLiteCache<T> CreateCache<T>()
+        public ICache<T> CreateCache<T>() where T : class
         {
             if (typeof(T) == typeof(SearchResults))
-                return (new SearchResultCache(_dao, _autoMapper, CreateCache<JiraIssue>())) as SQLiteCache<T>;
+            {
+                var cache = CreateCache<JiraIssue>();
+                return (new SearchResultCache(_dao, _autoMapper, cache)) as ICache<T>;
+            }
             else
                 return new SQLiteCache<T>(_dao, _autoMapper);
         }
 
-        public SQLiteCache<T[]> CreateArrayCache<T>()
+        public ICache<T[]> CreateArrayCache<T>() where T : class
         {
             return new SQLiteArrayCache<T>(_dao, _autoMapper);        
         }

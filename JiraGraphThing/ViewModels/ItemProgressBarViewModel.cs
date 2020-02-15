@@ -12,12 +12,26 @@ namespace JiraGraphThing.ViewModels
     {
         public int MaxBarMinutes {get;set;} = 1;
 
-        private JiraGraph _node;
-        private Sprint _sprint;
+        private UINode _uiNode;
+        private JiraGraph _node => _uiNode?.Node;
 
-        public bool HasChildren => _node != null && _node.GetChildren().Any();
+        public bool EnableExpand => _uiNode != null && _uiNode.EnableExpand;
+        public bool HasChildren => _uiNode != null && _uiNode.Node.GetChildren().Any();
 
         private bool _expanded = false;
+
+        public bool IsItemCompleted
+        {
+            get
+            {
+                if(_node is IssueNode issue)
+                {
+                    return issue.Status.IsComplete;
+                }
+
+                return false;
+            }
+        }
         public bool Expanded
         {
             get => _expanded;
@@ -31,14 +45,21 @@ namespace JiraGraphThing.ViewModels
             }
         }
 
-        public NodeWithSprint[] Children
+        public UINode[] Children
         {
             get
             {
-                if (_node == null)
-                    return new NodeWithSprint[] { };
+                if (_uiNode == null)
+                    return new UINode[] { };
                 else
-                    return _node.GetChildren().Select(p=> new NodeWithSprint(p,_sprint)).ToArray();
+                {
+                    var maxPoints = _uiNode.Node.GetChildren().Max(p => p.GetTotalStoryPoints());
+                    return _uiNode.Node
+                        .GetChildren()
+                        .OrderByDescending(p=>p.GetTotalStoryPoints())
+                        .Select(p => new UINode(p, _uiNode.Sprint, maxPoints, enableExpand: p.GetChildren().Any()))
+                        .ToArray();
+                }
             }
         }
 
@@ -47,7 +68,7 @@ namespace JiraGraphThing.ViewModels
             get => _node == null ? string.Empty : _node.Name;           
         }
 
-        public int MinutesEstimated => _node == null ? 0 : (int)(_node.GetTotalStoryPoints() * 60 * 6); //todo, make a setting
+        public int MinutesEstimated => _node == null ? 0 : (int)(_node.GetTotalStoryPoints() * (decimal)_uiNode.Sprint.TimePerStoryPoint.TotalMinutes); 
 
         public int MinutesLogged => _node == null ? 0 : (int)_node.GetTotalTimeSpent().TotalMinutes;
 
@@ -58,24 +79,20 @@ namespace JiraGraphThing.ViewModels
                 Expanded = !Expanded;
             }));
 
-        public void Initialize(JiraGraph node, Sprint sprint)
+        public void Initialize(UINode node)
         {
-            if(node != null && node != _node)
-            {                                
-                if (node is SprintNode || node is UserSprintNode)
-                    MaxBarMinutes = (int)(node.GetTotalStoryPoints() * (decimal)sprint.TimePerStoryPoint.TotalMinutes);
-                else
-                    MaxBarMinutes = 10 * 4 * 6 * 60;//should be computed
-
-                _node = node;
-                _sprint = sprint;
+            if(node != null && node != _uiNode)
+            {
+                MaxBarMinutes = (int)(node.MaxStoryPointsWithinParent * (decimal)node.Sprint.TimePerStoryPoint.TotalMinutes);
+                _uiNode = node;
 
                 RaisePropertyChanged(nameof(Title));
                 RaisePropertyChanged(nameof(MinutesLogged));
                 RaisePropertyChanged(nameof(MinutesEstimated));
                 RaisePropertyChanged(nameof(HasChildren));
                 RaisePropertyChanged(nameof(Expanded));
-
+                RaisePropertyChanged(nameof(EnableExpand));
+                RaisePropertyChanged(nameof(IsItemCompleted));
             }
         }
     }

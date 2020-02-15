@@ -126,7 +126,7 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Models\NodeWithSprint.cs" />
+    <Compile Include="Models\UINode.cs" />
     <Compile Include="Models\SprintTile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\NavigationService.cs" />

@@ -25,6 +25,8 @@ namespace JiraDataLayer.Models
 
         public decimal? StoryPoints { get; private set; }
 
+        public string StatusName { get; private set; }
+
         internal JiraIssue()
         {
         }
@@ -38,10 +40,10 @@ namespace JiraDataLayer.Models
             EpicKey = customFieldReader.ReadCustomField<EpicLink>(issue)?.Key;
             StoryPoints = customFieldReader.ReadCustomField<StoryPoints>(issue)?.Value;
             Sprint = customFieldReader.ReadCustomField<SprintField>(issue)?.Name;
-
+       
+            StatusName = issue.Status.Name;
             ParentKey = issue.ParentIssueKey ?? EpicKey;
-            TypeName = issue.Type.Name;
-            
+            TypeName = issue.Type.Name;            
         }
 
         //hack
@@ -56,6 +58,7 @@ namespace JiraDataLayer.Models
                 Sprint = Sprint,
                 Summary = Summary,
                 TypeName = TypeName,
+                StatusName= StatusName,
                 Key = Key
             };
         }

@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
+using JiraDataLayer.Cache;
 using JiraDataLayer.Services;
 using JiraDataLayer.Services.CustomFieldReaders;
 using JiraDataLayer.SqLite;
@@ -16,7 +17,10 @@ namespace JiraDataLayer
             SimpleIoc.Default.Register<SQLiteTableCreator>();
             SimpleIoc.Default.RegisterInternal<SQLiteDAO>();
             SimpleIoc.Default.RegisterInternal<SQLiteCacheProvider>();
-              
+            SimpleIoc.Default.RegisterInternal<BackgroundCacheProvider>();
+
+            SimpleIoc.Default.Register<ICacheProvider>(() => SimpleIoc.Default.GetInstance<BackgroundCacheProvider>());
+
             SimpleIoc.Default.Register<IJiraConfig, JiraConfig>();
             SimpleIoc.Default.Register<JiraRestClientProvider>();
             SimpleIoc.Default.Register<JiraGraphBuilder>();

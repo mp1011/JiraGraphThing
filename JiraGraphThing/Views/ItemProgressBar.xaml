@@ -9,46 +9,64 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
-
     <StackPanel>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="20"/>
-            <ColumnDefinition Width="200"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="250"/>
-        </Grid.ColumnDefinitions>
-        <HyperlinkButton
-            Visibility="{x:Bind ViewModel.HasChildren, Mode=OneWay, Converter={StaticResource BooleanToVisibility}}"
-            Grid.Column="0"             
-            Content="{x:Bind ViewModel.Expanded, Mode=OneWay, ConverterParameter='+|-', Converter={StaticResource BooleanToString}}"
-            Command="{x:Bind ViewModel.ExpandOrCollapse}" />
-        <Frame 
-               Grid.Column="1"                
-               VerticalContentAlignment="Center"
-               VerticalAlignment="Stretch">
-            <TextBlock  
-                FontSize="12"
-                TextWrapping="Wrap"
-                Text="{x:Bind ViewModel.Title, Mode=OneWay}"
-                />
-        </Frame>
-        <Frame Grid.Column="2" HorizontalContentAlignment="Left" x:Name="ProgressBarHolder">
-            <Canvas>
-                <Frame x:Name="TimeEstimatedProgressBar" Height="20" BorderBrush="Black" BorderThickness="2"  />
-                <Rectangle x:Name="TimeUsedProgressBar" Height="10" Fill="Red"/>
-            </Canvas>
-        </Frame>
-        <TextBlock Grid.Column="3">
-            <Run Text="{x:Bind ViewModel.MinutesLogged, Mode=OneWay}"/> /
-            <Run Text="{x:Bind ViewModel.MinutesEstimated, Mode=OneWay}"/> mins logged / estimated
-        </TextBlock>
-    </Grid>
-    <Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="64"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+                <Button
+                    Visibility="{x:Bind ViewModel.EnableExpand, Mode=OneWay, Converter={StaticResource BooleanToVisibility}}"
+                    Grid.Column="0"   
+                    Foreground="Black"
+                    Background="White"
+
+                    HorizontalContentAlignment="Left"
+                    VerticalContentAlignment="Top"
+                    Margin="0"
+                    Padding="0"
+                    Content="{x:Bind ViewModel.Expanded, Mode=OneWay, ConverterParameter='+|-', Converter={StaticResource BooleanToString}}"
+                    Command="{x:Bind ViewModel.ExpandOrCollapse}" />
+            
+                <Frame x:Name="ProgressBarHolder" Grid.Column="1" VerticalContentAlignment="Top" VerticalAlignment="Stretch">
+                    <StackPanel>
+                        <TextBlock  
+                            FontSize="12"
+                            TextWrapping="NoWrap"
+                            Text="{x:Bind ViewModel.Title, Mode=OneWay}"
+                            />
+                        <Canvas Height="20">
+                            <Rectangle x:Name="TimeUsedProgressBar"  Height="20">
+                                <Rectangle.Fill>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="{x:Bind BarColor1, Mode=OneWay}" Offset="0.0"/>
+                                    <GradientStop Color="{x:Bind BarColor2, Mode=OneWay}" Offset="1.0"/>
+                                    </LinearGradientBrush>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <Frame x:Name="TimeEstimatedProgressBar" 
+                                Height="20" 
+                                BorderBrush="Black" 
+                                BorderThickness="2"  />
+                        </Canvas>
+                        <StackPanel Margin="8,0,0,0" Orientation="Horizontal">
+                            <TextBlock FontSize="12" >
+                                <Run FontSize="12" FontWeight="Bold" Text="{x:Bind ViewModel.MinutesLogged, Mode=OneWay}"/> mins logged
+                            </TextBlock>
+                            <TextBlock TextAlignment="Center" Text="/" Width="20"/>
+                            <TextBlock FontSize="12" >
+                                <Run FontWeight="Bold" Text="{x:Bind ViewModel.MinutesEstimated, Mode=OneWay}"/> mins estimated
+                            </TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+                </Frame>
+            
+        </Grid>
+        <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>

@@ -3,11 +3,17 @@ using System.Threading.Tasks;
 
 namespace JiraDataLayer.Cache
 {
-    class NonCache<T> : ICache<T>
+    public class NonCache<T> : ICache<T>
+         where T : class
     {
-        public async Task<T> GetOrCompute(string key, Func<Task<T>> compute)
+        public async Task<T> GetOrCompute(string key, Func<string, Task<T>> compute, bool forceCompute = false)
         {
-            return await compute();
+            return await compute(key);
+        }
+
+        public T GetValueOrDefault(string key)
+        {
+            return default(T);
         }
     }
 }

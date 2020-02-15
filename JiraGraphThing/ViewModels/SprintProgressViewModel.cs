@@ -4,8 +4,10 @@ using JiraDataLayer.Models.GraphModels;
 using JiraDataLayer.Services;
 using JiraGraphThing.Models;
 using JiraGraphThing.Services;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace JiraGraphThing.ViewModels
@@ -49,7 +51,7 @@ namespace JiraGraphThing.ViewModels
             }
         }
 
-        public ObservableCollection<NodeWithSprint> SprintNodes { get; } = new ObservableCollection<NodeWithSprint>();
+        public ObservableCollection<UINode> SprintNodes { get; } = new ObservableCollection<UINode>();
 
         public ICommand GoBack { get; }
 
@@ -58,16 +60,19 @@ namespace JiraGraphThing.ViewModels
             ProgressMessage = $"{message} ({(progress * 100).ToString("0")}%)";
         }
 
-        public async void Initialize(string sprintName)
+        public async Task Initialize(string sprintName)
         {
             var sprint = await _sprintService.GetSprint(sprintName);
             SprintName = sprintName;
             SprintNodes.Clear();
             var sprintNode = await _jiraGraphBuilder.LoadUserSprintGraph(sprint);
 
-            SprintNodes.Add(new NodeWithSprint(sprintNode, sprint));
-            foreach (var item in sprintNode.Children)            
-                SprintNodes.Add(new NodeWithSprint(item, sprint));
+            SprintNodes.Add(new UINode(sprintNode, sprint, sprintNode.GetTotalStoryPoints(), enableExpand: false));
+            foreach (var item in sprintNode.Children.OrderByDescending(p=>p.GetTotalStoryPoints()))
+            {
+                var maxEstimated = sprintNode.Children.Max(p => p.GetTotalStoryPoints());
+                SprintNodes.Add(new UINode(item, sprint, maxEstimated, enableExpand: item.Children.Any()));
+            }
         }
     }
 }

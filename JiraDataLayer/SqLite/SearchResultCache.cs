@@ -13,9 +13,9 @@ namespace JiraDataLayer.SqLite
 {
     public class SearchResultCache : SQLiteCache<SearchResults>
     {
-        private SQLiteCache<JiraIssue> _issueCache;
+        private ICache<JiraIssue> _issueCache;
 
-        internal SearchResultCache(SQLiteDAO dao, AutoMapperService autoMapperService, SQLiteCache<JiraIssue> issueCache) 
+        internal SearchResultCache(SQLiteDAO dao, AutoMapperService autoMapperService, ICache<JiraIssue> issueCache) 
             : base(dao, autoMapperService)
         {
             _issueCache = issueCache;
@@ -27,7 +27,7 @@ namespace JiraDataLayer.SqLite
             if (cached != null)
             {
                 var results = _dao.Read<JQLSearchItemDTO>("SearchID=@id", new { id = cached.ROWID });
-                var issues = results.Select(p => _issueCache.GetCached(p.IssueKey)).ToArray();
+                var issues = results.Select(p => _issueCache.GetValueOrDefault(p.IssueKey)).ToArray();
                 return new SearchResults(cached.JQL, cached.Take, issues);
             }
 
@@ -47,7 +47,7 @@ namespace JiraDataLayer.SqLite
 
             foreach(var item in value.Items)
             {
-                Task.Run(()=>_issueCache.GetOrCompute(item.Key, async () => item));
+                Task.Run(()=>_issueCache.GetOrCompute(item.Key, async (k) => item));
                 _dao.Write(new JQLSearchItemDTO { SearchID = id, IssueKey = item.Key });
             }
 

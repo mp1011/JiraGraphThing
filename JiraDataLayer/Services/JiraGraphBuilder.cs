@@ -41,6 +41,12 @@ namespace JiraDataLayer.Services
             return new UserSprintNode(sprint, userNodes);
         }
 
+        private Status GetStatusByName(string name)
+        {
+            //todo, avoid hard coding
+            return new Status(name, isComplete: name == "DONE"); 
+        }
+
         private UserNode ExtractUserNode(SprintNode sprint, string user)
         {
             return new UserNode(user, ExtractForUser(user, sprint.Children));
@@ -66,9 +72,9 @@ namespace JiraDataLayer.Services
                 .ToArray();
 
             if(node.Issue.Assignee == user)
-                return new IssueNode(node.Issue, userWorkLogs, ExtractForUser(user, node.Children));
+                return new IssueNode(node.Issue, userWorkLogs, GetStatusByName(node.Issue.StatusName), ExtractForUser(user, node.Children));
             else
-                return new IssueNode(node.Issue.RemoveStoryPoints(), userWorkLogs, ExtractForUser(user, node.Children));
+                return new IssueNode(node.Issue.RemoveStoryPoints(), userWorkLogs, GetStatusByName(node.Issue.StatusName), ExtractForUser(user, node.Children));
 
         }
 
@@ -97,10 +103,10 @@ namespace JiraDataLayer.Services
 
         private async Task<IssueNode> ConstructNode(JiraIssue issue, ICache<IssueNode> cache, Sprint sprint)
         {
-            return await (cache.GetOrCompute(issue.Key, async () =>
+            return await (cache.GetOrCompute(issue.Key, async (key) =>
             {
-                var logs = await _jiraIssueService.GetWorkLogs(issue.Key,sprint).AttachErrorHandler();
-                return new IssueNode(issue, logs, await LoadChildren<IssueNode>(issue,cache,sprint).AttachErrorHandler());
+                var logs = await _jiraIssueService.GetWorkLogs(key, sprint).AttachErrorHandler();
+                return new IssueNode(issue, logs, GetStatusByName(issue.StatusName), await LoadChildren<IssueNode>(issue,cache,sprint).AttachErrorHandler());
             })).AttachErrorHandler();
         }
 

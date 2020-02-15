@@ -69,7 +69,7 @@ namespace JiraDataLayer.Services
 
         private TimeSpan GetStoryPointsPerSprint(SprintAPIModel model)
         {
-            if (model.startDate <= new DateTime(2020, 2, 13))
+            if (model.startDate < new DateTime(2020, 2, 13))
                 return TimeSpan.FromHours(6);
             else
                 return TimeSpan.FromHours(3);

@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Threading;
 using JiraDataLayer;
 using JiraGraphThing.IOC;
 using JiraGraphThing.Services;
@@ -44,6 +45,7 @@ namespace JiraGraphThing
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
+            DispatcherHelper.Initialize();
             DataConfig.DataPath = ApplicationData.Current.LocalFolder.Path;
             IOC.DIRegistrar.RegisterTypes();
             Frame rootFrame = Window.Current.Content as Frame;

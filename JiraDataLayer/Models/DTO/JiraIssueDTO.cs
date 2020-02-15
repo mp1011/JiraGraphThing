@@ -21,5 +21,7 @@ namespace JiraDataLayer.Models.DTO
 
         public string Summary { get; set; }
         public decimal StoryPoints { get; set; }
+
+        public string StatusName { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
 using JiraDataLayer.Models.GraphModels;
 using JiraGraphThing.Models;
+using JiraGraphThing.Services;
 using JiraGraphThing.ViewModels;
 using System.ComponentModel;
 using System.Numerics;
@@ -17,9 +18,15 @@ namespace JiraGraphThing.Views
         {
             this.InitializeComponent();
             this.DataContextChanged += ItemProgressBar_DataContextChanged;
-            ViewModel = new ItemProgressBarViewModel();
+            ViewModel = new ItemProgressBarViewModel(SimpleIoc.Default.GetInstance<PageNavigationService>());
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             this.LayoutUpdated += ItemProgressBar_LayoutUpdated;
+            ProgressBarHolder.PointerPressed += ProgressBarHolder_PointerPressed;
+        }
+
+        private void ProgressBarHolder_PointerPressed(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        {
+            ViewModel.NavigateToDetails();
         }
 
         public ItemProgressBarViewModel ViewModel { get; }

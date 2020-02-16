@@ -16,17 +16,11 @@ namespace JiraGraphThing.ViewModels
     {
         private readonly JiraGraphBuilder _jiraGraphBuilder;
         private readonly SprintService _sprintService;
-        public SprintProgressViewModel(JiraGraphBuilder jiraGraphBuilder, SprintService sprintService,
-            PageNavigationService navigationService)
+        public SprintProgressViewModel(JiraGraphBuilder jiraGraphBuilder, SprintService sprintService)
         {
             _jiraGraphBuilder = jiraGraphBuilder;
             _jiraGraphBuilder.OnProgressChanged += OnProgressChanged;
             _sprintService = sprintService;
-
-            GoBack = new RelayCommand(() =>
-            {
-                navigationService.NavigateToMainPage();
-            }, keepTargetAlive:true);
         }
 
         private string _sprintName;
@@ -52,9 +46,7 @@ namespace JiraGraphThing.ViewModels
         }
 
         public ObservableCollection<UINode> SprintNodes { get; } = new ObservableCollection<UINode>();
-
-        public ICommand GoBack { get; }
-
+     
         private void OnProgressChanged(string message, decimal progress)
         {
             ProgressMessage = $"{message} ({(progress * 100).ToString("0")}%)";

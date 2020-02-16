@@ -21,7 +21,6 @@
         </Grid.ColumnDefinitions>
 
         <StackPanel Grid.Row="0">
-            <Button Content="Back" Command="{x:Bind ViewModel.GoBack, Mode=OneWay}" />
             <TextBlock Text="{x:Bind ViewModel.SprintName, Mode=OneWay}"/>
             <TextBlock Text="{x:Bind ViewModel.SprintNodes.Count, Mode=OneWay}"/>
             <TextBlock Text="{x:Bind ViewModel.ProgressMessage, Mode=OneWay}"/>

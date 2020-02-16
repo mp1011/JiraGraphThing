@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight.Command;
 using JiraDataLayer.Models;
 using JiraDataLayer.Models.GraphModels;
 using JiraGraphThing.Models;
+using JiraGraphThing.Services;
 using System.Linq;
 using System.Windows.Input;
 
@@ -10,7 +11,14 @@ namespace JiraGraphThing.ViewModels
 {
     public class ItemProgressBarViewModel : ViewModelBase
     {
-        public int MaxBarMinutes {get;set;} = 1;
+        private readonly PageNavigationService _pageNavigationService;
+
+        public ItemProgressBarViewModel(PageNavigationService pageNavigationService)
+        {
+            _pageNavigationService = pageNavigationService;
+        }
+
+        public int MaxBarMinutes { get; set; } = 1;
 
         private UINode _uiNode;
         private JiraGraph _node => _uiNode?.Node;
@@ -24,7 +32,7 @@ namespace JiraGraphThing.ViewModels
         {
             get
             {
-                if(_node is IssueNode issue)
+                if (_node is IssueNode issue)
                 {
                     return issue.Status.IsComplete;
                 }
@@ -56,7 +64,7 @@ namespace JiraGraphThing.ViewModels
                     var maxPoints = _uiNode.Node.GetChildren().Max(p => p.GetTotalStoryPoints());
                     return _uiNode.Node
                         .GetChildren()
-                        .OrderByDescending(p=>p.GetTotalStoryPoints())
+                        .OrderByDescending(p => p.GetTotalStoryPoints())
                         .Select(p => new UINode(p, _uiNode.Sprint, maxPoints, enableExpand: p.GetChildren().Any()))
                         .ToArray();
                 }
@@ -65,10 +73,10 @@ namespace JiraGraphThing.ViewModels
 
         public string Title
         {
-            get => _node == null ? string.Empty : _node.Name;           
+            get => _node == null ? string.Empty : _node.Name;
         }
 
-        public int MinutesEstimated => _node == null ? 0 : (int)(_node.GetTotalStoryPoints() * (decimal)_uiNode.Sprint.TimePerStoryPoint.TotalMinutes); 
+        public int MinutesEstimated => _node == null ? 0 : (int)(_node.GetTotalStoryPoints() * (decimal)_uiNode.Sprint.TimePerStoryPoint.TotalMinutes);
 
         public int MinutesLogged => _node == null ? 0 : (int)_node.GetTotalTimeSpent().TotalMinutes;
 
@@ -79,11 +87,19 @@ namespace JiraGraphThing.ViewModels
                 Expanded = !Expanded;
             }));
 
+        public void NavigateToDetails()
+        {
+            _pageNavigationService.NavigateToWorkHistory(_node);
+        }
+
         public void Initialize(UINode node)
         {
             if(node != null && node != _uiNode)
             {
                 MaxBarMinutes = (int)(node.MaxStoryPointsWithinParent * (decimal)node.Sprint.TimePerStoryPoint.TotalMinutes);
+                if (MaxBarMinutes <= 0)
+                    MaxBarMinutes = 1;
+
                 _uiNode = node;
 
                 RaisePropertyChanged(nameof(Title));

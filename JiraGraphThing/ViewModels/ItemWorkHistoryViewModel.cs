@@ -16,16 +16,21 @@ namespace JiraGraphThing.ViewModels
             _dailyWorkHistoryCalculator = dailyWorkHistoryCalculator;
         }
 
+        public UINode Node { get; private set; }
+
         public ObservableCollection<DailyWorkHistory> WorkLogs { get; } = new ObservableCollection<DailyWorkHistory>();
 
         public void Initialize(UINode node)
         {
+            Node = node;
             WorkLogs.Clear();
             
             foreach(var workLog in _dailyWorkHistoryCalculator.CalculateWorkHistory(node.Sprint,node.Node))
             {
                 WorkLogs.Add(workLog);
             }
+
+            RaisePropertyChanged(nameof(Node));
         }
     }
 

@@ -14,6 +14,7 @@
             <con:BooleanToString x:Key="BooleanToString"/>
             <con:DateFormatter x:Key="DateFormatter"/>
             <con:CompactTimeFormatter x:Key="CompactTimeFormatter"/>
+            <con:DoubleToInt x:Key="DoubleToInt"/>
         </ResourceDictionary>
     </Application.Resources>
     

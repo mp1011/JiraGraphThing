@@ -109,6 +109,7 @@ namespace JiraGraphThing.ViewModels
                 RaisePropertyChanged(nameof(Expanded));
                 RaisePropertyChanged(nameof(EnableExpand));
                 RaisePropertyChanged(nameof(IsItemCompleted));
+                RaisePropertyChanged(nameof(MaxBarMinutes));
             }
         }
     }

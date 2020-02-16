@@ -37,7 +37,7 @@
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <local:ItemProgressBar DataContext="{Binding}"/>
+                    <local:ItemProgress DataContext="{Binding}"/>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

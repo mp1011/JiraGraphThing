@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="JiraGraphThing.Views.ItemProgressBar"
+    x:Class="JiraGraphThing.Views.ItemProgress"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:JiraGraphThing.Views"
@@ -32,27 +32,18 @@
                     Content="{x:Bind ViewModel.Expanded, Mode=OneWay, ConverterParameter='+|-', Converter={StaticResource BooleanToString}}"
                     Command="{x:Bind ViewModel.ExpandOrCollapse}" />
             
-                <Frame x:Name="ProgressBarHolder" Grid.Column="1" VerticalContentAlignment="Top" VerticalAlignment="Stretch">
+                <Frame Grid.Column="1" VerticalContentAlignment="Top" VerticalAlignment="Stretch">
                     <StackPanel>
                         <TextBlock  
                             FontSize="12"
                             TextWrapping="NoWrap"
                             Text="{x:Bind ViewModel.Title, Mode=OneWay}"
                             />
-                        <Canvas Height="20">
-                            <Rectangle x:Name="TimeUsedProgressBar"  Height="20">
-                                <Rectangle.Fill>
-                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                        <GradientStop Color="{x:Bind BarColor1, Mode=OneWay}" Offset="0.0"/>
-                                    <GradientStop Color="{x:Bind BarColor2, Mode=OneWay}" Offset="1.0"/>
-                                    </LinearGradientBrush>
-                                </Rectangle.Fill>
-                            </Rectangle>
-                            <Frame x:Name="TimeEstimatedProgressBar" 
-                                Height="20" 
-                                BorderBrush="Black" 
-                                BorderThickness="2"  />
-                        </Canvas>
+                        <local:TimeBar x:Name="ProgressBar" 
+                                       SpentMinutes="{x:Bind ViewModel.MinutesLogged, Mode=OneWay}"
+                                       EstimatedMinutes="{x:Bind ViewModel.MinutesEstimated, Mode=OneWay}"
+                                       MaxPossibleMinutes="{x:Bind ViewModel.MaxBarMinutes, Mode=OneWay}"
+                                       IsItemCompleted="{x:Bind ViewModel.IsItemCompleted,Mode=OneWay}" />
                         <StackPanel Margin="8,0,0,0" Orientation="Horizontal">
                             <TextBlock FontSize="12" >
                                 <Run FontSize="12" FontWeight="Bold" Text="{x:Bind ViewModel.MinutesLogged, Mode=OneWay}"/> mins logged
@@ -84,7 +75,7 @@
             </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <local:ItemProgressBar DataContext="{Binding}"/>
+                    <local:ItemProgress DataContext="{Binding}"/>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>

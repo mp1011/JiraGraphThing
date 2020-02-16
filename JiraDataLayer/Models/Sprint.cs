@@ -1,6 +1,7 @@
 ﻿using JiraDataLayer.Models.JiraPocos;
 using JiraGraphThing.Core.Extensions;
 using System;
+using System.Collections.Generic;
 
 namespace JiraDataLayer.Models
 {
@@ -15,6 +16,19 @@ namespace JiraDataLayer.Models
         public override string ToString()
         {
             return Name;
+        }
+
+        public IEnumerable<DateTime> GetDays()
+        {
+            var day = Start.GetMorningTime();
+         
+            while (day <= End)
+            {
+                if (day.DayOfWeek != DayOfWeek.Saturday && day.DayOfWeek != DayOfWeek.Sunday)                
+                    yield return day;
+                
+                day = day.AddDays(1);
+            }
         }
 
         internal Sprint(SprintAPIModel sprintModel, TimeSpan timePerStoryPoint)

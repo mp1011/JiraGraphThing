@@ -12,25 +12,26 @@ namespace JiraDataLayer.Services
 
         public IEnumerable<DailyWorkHistory> CalculateWorkHistory(Sprint sprint, JiraGraph node)
         {
-            var day = sprint.Start.GetMorningTime();
-            TimeSpan totalTimeSpent = TimeSpan.Zero;
-
+            var sprintDays = sprint.GetDays().ToArray();
             var workLogs = node.GetWorkLogs().ToArray();
+            TimeSpan timeSpentSoFar = TimeSpan.Zero;
 
-            while(day <= sprint.End)
+            var totalTimeSpent = TimeSpan.FromMinutes(workLogs
+                .Where(p => p.Start >= sprint.Start && p.Start < sprint.End)
+                .Sum(p => p.TimeSpent.TotalMinutes));
+
+            var timeEstimated = TimeSpan.FromMinutes((double)node.GetTotalStoryPoints() * sprint.TimePerStoryPoint.TotalMinutes);
+
+            foreach(var day in sprintDays)
             {
-                if (day.DayOfWeek != DayOfWeek.Saturday && day.DayOfWeek != DayOfWeek.Sunday)
-                {
-                    var historyForDay = CalculateWorkHistoryForDay(day, workLogs, totalTimeSpent);
-                    totalTimeSpent = historyForDay.TimeSpentSoFar;
-                    yield return historyForDay;
-                }
-
-                day = day.AddDays(1);
+                var historyForDay = CalculateWorkHistoryForDay(day, workLogs, timeSpentSoFar, timeEstimated, totalTimeSpent);
+                timeSpentSoFar = historyForDay.TimeSpentSoFar;
+                yield return historyForDay;
             }
         }
 
-        private DailyWorkHistory CalculateWorkHistoryForDay(DateTime day, WorkLog[] workLogs, TimeSpan timeSpentSoFar)
+        private DailyWorkHistory CalculateWorkHistoryForDay(DateTime day, WorkLog[] workLogs, TimeSpan timeSpentSoFar,
+            TimeSpan timeEstimated, TimeSpan totalTimeSpent)
         {
             var logsForDay = workLogs
                 .Where(p => p.Start >= day && p.Start < day.AddDays(1))
@@ -38,7 +39,7 @@ namespace JiraDataLayer.Services
 
             var timeSpent = TimeSpan.FromMinutes(logsForDay.Sum(p => p.TimeSpent.TotalMinutes));
 
-            return new DailyWorkHistory(day, timeSpent, timeSpent + timeSpentSoFar);
+            return new DailyWorkHistory(day, timeSpent, timeSpent + timeSpentSoFar, timeEstimated, totalTimeSpent);
         }
     }
 }

@@ -54,6 +54,9 @@ namespace JiraGraphThing.ViewModels
 
         public async Task Initialize(string sprintName)
         {
+            if (sprintName == SprintName)
+                return;
+
             var sprint = await _sprintService.GetSprint(sprintName);
             SprintName = sprintName;
             SprintNodes.Clear();

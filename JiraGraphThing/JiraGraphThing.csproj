@@ -123,6 +123,7 @@
     <Compile Include="Converters\BooleanToVisibility.cs" />
     <Compile Include="Converters\CompactTimeFormatter.cs" />
     <Compile Include="Converters\DateFormatter.cs" />
+    <Compile Include="Converters\DoubleToInt.cs" />
     <Compile Include="IOC\DIRegistrar.cs" />
     <Compile Include="IOC\ViewModelLocator.cs" />
     <Compile Include="MainPage.xaml.cs">
@@ -136,8 +137,8 @@
     <Compile Include="ViewModels\ItemWorkHistoryViewModel.cs" />
     <Compile Include="ViewModels\SprintPickerViewModel.cs" />
     <Compile Include="ViewModels\SprintProgressViewModel.cs" />
-    <Compile Include="Views\ItemProgressBar.xaml.cs">
-      <DependentUpon>ItemProgressBar.xaml</DependentUpon>
+    <Compile Include="Views\ItemProgress.xaml.cs">
+      <DependentUpon>ItemProgress.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ItemWorkHistory.xaml.cs">
       <DependentUpon>ItemWorkHistory.xaml</DependentUpon>
@@ -150,6 +151,9 @@
     </Compile>
     <Compile Include="Views\SprintProgress.xaml.cs">
       <DependentUpon>SprintProgress.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TimeBar.xaml.cs">
+      <DependentUpon>TimeBar.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -176,7 +180,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\ItemProgressBar.xaml">
+    <Page Include="Views\ItemProgress.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -193,6 +197,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\SprintProgress.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TimeBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

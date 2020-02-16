@@ -5,15 +5,28 @@
     xmlns:local="using:JiraGraphThing.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:model="using:JiraGraphThing.Models"
+    xmlns:model="using:JiraDataLayer.Models"
     DataContext="{Binding Source={StaticResource Locator}, Path=[ItemWorkHistoryViewModel]}"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <ListView ItemsSource="{x:Bind ViewModel.WorkLogs}">
         <ListView.ItemTemplate>
-            <DataTemplate x:DataType="model:UIWorkLog">
-                <TextBlock Text="{x:Bind TimeSpentSoFar}"/>
+            <DataTemplate x:DataType="model:DailyWorkHistory">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0" 
+                               Text="{x:Bind Date, ConverterParameter='ddd M/dd', Converter={StaticResource DateFormatter}}"/>
+                    <TextBlock Grid.Column="1" 
+                               Text="{x:Bind TimeSpent, Mode=OneWay, Converter={StaticResource CompactTimeFormatter}}"/>
+
+                    
+                </Grid>
             </DataTemplate>
         </ListView.ItemTemplate>
     </ListView>

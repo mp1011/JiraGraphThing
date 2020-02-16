@@ -1,25 +1,30 @@
 ﻿using GalaSoft.MvvmLight;
+using JiraDataLayer.Models;
 using JiraDataLayer.Models.GraphModels;
+using JiraDataLayer.Services;
 using JiraGraphThing.Models;
-using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace JiraGraphThing.ViewModels
 {
     public class ItemWorkHistoryViewModel : ViewModelBase
     {
-        public ObservableCollection<UIWorkLog> WorkLogs { get; } = new ObservableCollection<UIWorkLog>();
+        private readonly DailyWorkHistoryCalculator _dailyWorkHistoryCalculator;
 
-        public void Initialize(JiraGraph issue)
+        public ItemWorkHistoryViewModel(DailyWorkHistoryCalculator dailyWorkHistoryCalculator)
+        {
+            _dailyWorkHistoryCalculator = dailyWorkHistoryCalculator;
+        }
+
+        public ObservableCollection<DailyWorkHistory> WorkLogs { get; } = new ObservableCollection<DailyWorkHistory>();
+
+        public void Initialize(UINode node)
         {
             WorkLogs.Clear();
-            TimeSpan totalTimeSpent = TimeSpan.Zero;
-
-            foreach(var log in issue.GetWorkLogs().OrderBy(p=> p.Start))
+            
+            foreach(var workLog in _dailyWorkHistoryCalculator.CalculateWorkHistory(node.Sprint,node.Node))
             {
-                totalTimeSpent += log.TimeSpent;
-                WorkLogs.Add(new UIWorkLog(log, totalTimeSpent));
+                WorkLogs.Add(workLog);
             }
         }
     }

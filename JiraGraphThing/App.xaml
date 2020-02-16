@@ -12,6 +12,8 @@
             <ioc:ViewModelLocator x:Key="Locator"/>
             <con:BooleanToVisibility x:Key="BooleanToVisibility"/>
             <con:BooleanToString x:Key="BooleanToString"/>
+            <con:DateFormatter x:Key="DateFormatter"/>
+            <con:CompactTimeFormatter x:Key="CompactTimeFormatter"/>
         </ResourceDictionary>
     </Application.Resources>
     

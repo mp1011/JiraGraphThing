@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\JiraDataLayer\JiraDataLayer.csproj" />
+    <ProjectReference Include="..\JiraGraphThing.Core\JiraGraphThing.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

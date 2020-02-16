@@ -89,7 +89,7 @@ namespace JiraGraphThing.ViewModels
 
         public void NavigateToDetails()
         {
-            _pageNavigationService.NavigateToWorkHistory(_node);
+            _pageNavigationService.NavigateToWorkHistory(_uiNode);
         }
 
         public void Initialize(UINode node)

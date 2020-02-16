@@ -29,6 +29,8 @@ namespace JiraDataLayer
             SimpleIoc.Default.RegisterInternal<JiraIssueService>();
             SimpleIoc.Default.RegisterInternal<SprintService>();
 
+            SimpleIoc.Default.Register<DailyWorkHistoryCalculator>();
+
         }
     }
 }

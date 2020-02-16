@@ -1,4 +1,5 @@
 ﻿using JiraDataLayer.Models.GraphModels;
+using JiraGraphThing.Models;
 using JiraGraphThing.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -33,7 +34,7 @@ namespace JiraGraphThing.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             var vm = ViewModel;
-            if(e.Parameter is JiraGraph node)
+            if(e.Parameter is UINode node)
             {
                 vm.Initialize(node);
             }

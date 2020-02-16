@@ -24,7 +24,7 @@ namespace JiraDataLayer.Models
             //calculate because start date is whenever the start button was pushed
             if (sprintModel.endDate.Year > 1)
             {
-                Start = sprintModel.endDate.AddDays(-14)
+                Start = sprintModel.endDate.AddDays(-13)
                                            .GetMorningTime();
             }
             End = sprintModel.endDate;

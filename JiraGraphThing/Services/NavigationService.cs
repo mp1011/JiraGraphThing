@@ -1,4 +1,5 @@
 ﻿using JiraDataLayer.Models.GraphModels;
+using JiraGraphThing.Models;
 using JiraGraphThing.Views;
 using System;
 using Windows.UI.Xaml;
@@ -41,7 +42,7 @@ namespace JiraGraphThing.Services
             ContentFrame.Navigate(typeof(SprintProgress), sprintName);
         }
 
-        public void NavigateToWorkHistory(JiraGraph node)
+        public void NavigateToWorkHistory(UINode node)
         {
             ContentFrame.Navigate(typeof(ItemWorkHistory), node);
         }

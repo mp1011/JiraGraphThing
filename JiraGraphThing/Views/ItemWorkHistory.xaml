@@ -36,7 +36,7 @@
                         <TextBlock Grid.Column="1" 
                                    Text="{x:Bind TimeSpent, Mode=OneWay, Converter={StaticResource CompactTimeFormatter}}"/>
 
-                        <Frame Grid.Column="2" Background="Red">
+                        <Frame Grid.Column="2">
                             <local:TimeBar 
                                        SpentMinutes="{x:Bind TimeSpentSoFar.TotalMinutes, Mode=OneWay, Converter={StaticResource DoubleToInt}}"
                                        EstimatedMinutes="{x:Bind TimeEstimated.TotalMinutes, Mode=OneWay, Converter={StaticResource DoubleToInt}}"

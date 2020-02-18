@@ -54,6 +54,10 @@ namespace JiraGraphThing.ViewModels
 
         public async Task Initialize(string sprintName)
         {
+            await PopupService.ShowPopup("Hello");
+            await PopupService.ShowPopup("Hello2");
+            await PopupService.ShowPopup("Hello3");
+
             if (sprintName == SprintName)
                 return;
 

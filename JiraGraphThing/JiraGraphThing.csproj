@@ -133,6 +133,7 @@
     <Compile Include="Models\SprintTile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\NavigationService.cs" />
+    <Compile Include="Services\PopupService.cs" />
     <Compile Include="ViewModels\ItemProgressBarViewModel.cs" />
     <Compile Include="ViewModels\ItemWorkHistoryViewModel.cs" />
     <Compile Include="ViewModels\SprintPickerViewModel.cs" />

@@ -1,5 +1,6 @@
 ﻿using JiraGraphThing.ViewModels;
 using System;
+using System.ComponentModel;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -8,7 +9,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace JiraGraphThing.Views
 {
-    public sealed partial class TimeBar : UserControl
+    public sealed partial class TimeBar : UserControl, INotifyPropertyChanged
     {
         public int SpentMinutes
         {
@@ -59,6 +60,8 @@ namespace JiraGraphThing.Views
            typeof(TimeBar),
            new PropertyMetadata(false));
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public TimeBar()
         {
             this.InitializeComponent();
@@ -101,6 +104,10 @@ namespace JiraGraphThing.Views
 
             TimeEstimatedProgressBar.Width = ProgressBarHolder.ActualWidth * ((double)EstimatedMinutes / MaxPossibleMinutes);
             TimeUsedProgressBar.Width = ProgressBarHolder.ActualWidth * ((double)SpentMinutes / MaxPossibleMinutes);
+
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BarColor1)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(BarColor2)));
+
         }
     }
 }

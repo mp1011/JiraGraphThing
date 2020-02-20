@@ -9,7 +9,7 @@ namespace Tests.JiraDataLayerTests
 {
     class DailyWorkHistoryCalculatorTests :TestBase
     {
-        [TestCase("DSDE Sprint 21","michael.pastore")]
+        [TestCase("DSDE Sprint 21","Michael Pastore")]
         public async Task CanComputeWorkHistory(string sprintName, string user)
         {
             var calculator = SimpleIoc.Default.GetInstance<DailyWorkHistoryCalculator>();

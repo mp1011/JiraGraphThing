@@ -15,19 +15,6 @@ namespace JiraDataLayer.Cache
         {
         }
 
-        public async Task<T[]> GetOrCompute(string key, Func<Task<T[]>> compute)
-        {
-            throw new NotImplementedException();
-            //var result = Read(key);
-            //if(result == null)
-            //{
-            //    result = await compute();
-            //    Write(key, result);
-            //}
-
-            //return result;
-        }
-
         protected override T[] Read(string key)
         {
             var mappedType = _autoMapperService.GetMappedType<T>();
@@ -44,6 +31,9 @@ namespace JiraDataLayer.Cache
 
         protected override void Write(string key, T[] value)
         {
+            if (key == "DSDE-167")
+                Console.WriteLine("!");
+
             var mappedType = _autoMapperService.GetMappedType<T>();
             _dao.Delete(mappedType, "Key=@key", new { key });
 

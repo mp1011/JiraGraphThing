@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using JiraDataLayer.Models;
 using JiraGraphThing.Services;
+using System.Linq;
 using System.Windows.Input;
 
 namespace JiraGraphThing.Models
@@ -13,6 +14,15 @@ namespace JiraGraphThing.Models
         public ICommand GotoSprint { get; }
 
         public string Name => _sprint.Name;
+
+        public string NameShort 
+        { 
+            get
+            {
+                var parts = Name.Split(' ');
+                return parts.Last();
+            } 
+        }
 
         public SprintTile(Sprint sprint, PageNavigationService navigationService)
         {

@@ -1,4 +1,5 @@
 ﻿using Atlassian.Jira;
+using JiraDataLayer.Models.JiraPocos;
 using System;
 
 namespace JiraDataLayer.Models
@@ -22,6 +23,14 @@ namespace JiraDataLayer.Models
             Start = log.StartDate.GetValueOrDefault();
             TimeSpent = TimeSpan.FromSeconds(log.TimeSpentInSeconds);
         }
+
+        internal WorkLog(WorkLogV2 log)
+        {
+            Author = log.Author.displayName;
+            Start = log.started;
+            TimeSpent = TimeSpan.FromSeconds(log.timeSpentSeconds);
+        }
+
 
         public WorkLog(string author, DateTime start, TimeSpan timeSpent)
         {

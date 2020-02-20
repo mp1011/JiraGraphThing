@@ -1,6 +1,7 @@
 ﻿using Atlassian.Jira;
 using JiraDataLayer.Cache;
 using JiraDataLayer.Models;
+using JiraDataLayer.Models.JiraPocos;
 using JiraDataLayer.SqLite;
 using JiraGraphThing.Core.Extensions;
 using System;
@@ -75,11 +76,22 @@ namespace JiraDataLayer.Services
         {
             var client = _jiraClientProvider.CreateClient();
             var logs = await _workLogCache.GetOrCompute(issueKey,
-                async (key) => 
-                (   await client.Issues
-                    .GetWorklogsAsync(key))
-                    .Select(log=>new WorkLog(log))
-                    .ToArray());
+                async (key) =>
+                {
+                    var logModels = await client.RestClient.ExecuteRequestAsync<WorkLogsCollection>(
+                                method: RestSharp.Method.GET,
+                                resource: $@"/rest/api/2/issue/{issueKey}/worklog");
+
+                    var workLogs = logModels.worklogs
+                        .Select(log => new WorkLog(log))
+                        .ToArray();
+
+                    return workLogs;
+                    //var workLogs = (await client.Issues.GetWorklogsAsync(key)).ToArray();
+                    //return workLogs
+                    //    .Select(log => new WorkLog(log))
+                    //    .ToArray();
+                });
 
             if (sprint != null)
                 logs = logs.Where(p => p.Start >= sprint.Start && p.Start <= sprint.End).ToArray();

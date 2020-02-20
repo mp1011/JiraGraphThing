@@ -1,5 +1,6 @@
 ﻿using JiraGraphThing.Core.Extensions;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace JiraDataLayer.Cache
@@ -9,7 +10,7 @@ namespace JiraDataLayer.Cache
     {
         private readonly ICache<T> _underlyingCache;
         private readonly TimeSpan _maxAge;
-        private DateTime _lastRefreshTime;
+        private Dictionary<string, DateTime> _lastRefreshTime = new Dictionary<string, DateTime>();
         
         public BackgroundRefreshingCache(TimeSpan maxAge, ICache<T> underlyingCache)
         {
@@ -19,15 +20,17 @@ namespace JiraDataLayer.Cache
 
         public async Task<T> GetOrCompute(string key, Func<string, Task<T>> compute, bool forceCompute = false)
         {
+            if (!_lastRefreshTime.ContainsKey(key))
+                _lastRefreshTime[key] = DateTime.MinValue;
+
             var cachedValue = _underlyingCache.GetValueOrDefault(key);
             if(cachedValue == null || forceCompute)
             {
                 cachedValue = await _underlyingCache.GetOrCompute(key, compute, forceCompute);
-                _lastRefreshTime = DateTime.Now;
-                return cachedValue;
+                _lastRefreshTime[key] = DateTime.Now;
             }
 
-            if (_lastRefreshTime.TimeSince() > _maxAge)
+            if (_lastRefreshTime[key].TimeSince() > _maxAge)
                 ComputeValueInAnotherThread(key, compute);
 
             return cachedValue;
@@ -40,8 +43,11 @@ namespace JiraDataLayer.Cache
 
         private void ComputeValueInAnotherThread(string key, Func<string, Task<T>> compute)
         {
+            if (key.ToUpper().Contains("DSDE-167"))
+                Console.WriteLine("!");
+
             Task.Run(async () => await _underlyingCache.GetOrCompute(key, compute, forceCompute:true))
-                .ContinueWith(t => _lastRefreshTime = DateTime.Now);
+                .ContinueWith(t => _lastRefreshTime[key] = DateTime.Now);
         }
     }
 }

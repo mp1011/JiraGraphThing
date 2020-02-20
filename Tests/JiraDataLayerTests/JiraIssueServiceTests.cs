@@ -90,7 +90,7 @@ namespace Tests.JiraDataLayerTests
             count.Should().Be(expectedChildren);
         }
 
-        [TestCase("DSDE-167", "To Do")]
+        [TestCase("DSDE-3291", "To Do")]
         [TestCase("DSDE-3186", "IN PROGRESS")]
         [TestCase("DSDE-3170", "DONE")]
         public async Task CanReadStatus(string key, string expectedStatus)
@@ -110,6 +110,22 @@ namespace Tests.JiraDataLayerTests
             logs.Sum(p => p.TimeSpent.TotalHours)
                 .Should()
                 .Be(expectedHours);
+
+            foreach (var log in logs)
+                log.Author.Should().NotBeNull();
+
+        }
+
+        [TestCase("DSDE-3197", "Michael Pastore")]
+        public async Task CanReadAuthorFromWorkLogs(string key, string expectedAuthor)
+        {
+            var service = SimpleIoc.Default.GetInstance<JiraIssueService>();
+
+            var logs = await service.GetWorkLogs(key);
+
+            foreach (var log in logs)
+                log.Author.Should().Be(expectedAuthor);
+
         }
     }
 }

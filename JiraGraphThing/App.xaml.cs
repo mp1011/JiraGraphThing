@@ -35,7 +35,8 @@ namespace JiraGraphThing
         public App()
         {
             this.InitializeComponent();
-            this.Suspending += OnSuspending;       
+            this.Suspending += OnSuspending;
+            this.RequestedTheme = ApplicationTheme.Dark;
         }
 
         /// <summary>

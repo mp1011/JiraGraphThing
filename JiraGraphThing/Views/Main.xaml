@@ -13,7 +13,10 @@
     <NavigationView PaneDisplayMode="Left" 
                     MenuItemsSource="{x:Bind ViewModel.Sprints, Mode=OneWay}"
                     IsBackButtonVisible="Auto"
-                    IsBackEnabled="True"
+                    IsSettingsVisible="False"
+                    IsPaneToggleButtonVisible="False"
+                    OpenPaneLength="200"
+                    IsBackEnabled="True"                     
                      x:Name="Navigation">
         <NavigationView.MenuItemTemplate>
             <DataTemplate x:DataType="model:SprintTile">

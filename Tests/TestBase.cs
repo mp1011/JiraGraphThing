@@ -15,7 +15,7 @@ namespace Tests
         public void Setup()
         {
             OneConfig.Services.FileHelper.ApplicationDirectory = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
-            CopyDatabase();
+           // CopyDatabase();
             JiraDataLayer.DIRegistrar.RegisterTypes();
         }
 

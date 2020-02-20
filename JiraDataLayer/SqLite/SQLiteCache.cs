@@ -25,6 +25,9 @@ namespace JiraDataLayer.Cache
            
         public async Task<T> GetOrCompute(string key, Func<string, Task<T>> compute, bool forceCompute = false)
         {
+            if (key == "DSDE-167")
+                Console.WriteLine("!");
+
             var result = Read(key);
             if(result == null || forceCompute)
             {
@@ -48,6 +51,9 @@ namespace JiraDataLayer.Cache
 
         protected virtual void Write(string key, T value)
         {
+            if (key.ToUpper().Contains("DSDE-167"))
+                Console.WriteLine("!");
+
             var dto = _autoMapperService.Map(value);
             _dao.InvokeGenericMethod(nameof(_dao.Write), dto.GetType(), dto, false);
         }

@@ -20,7 +20,7 @@
         </Rectangle>
         <Frame x:Name="TimeEstimatedProgressBar" 
                                 Height="20" 
-                                BorderBrush="Black" 
-                                BorderThickness="2"  />
+                                BorderBrush="{ThemeResource  ApplicationSecondaryForegroundThemeBrush}" 
+                                BorderThickness="1"  />
     </Canvas>
 </UserControl>
